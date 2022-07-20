@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include defender_antivirus_cloud_manager *.css
+recursive-include defender_antivirus_cloud_manager *.csv
+recursive-include defender_antivirus_cloud_manager *.html
+recursive-include defender_antivirus_cloud_manager *.ico
+recursive-include defender_antivirus_cloud_manager *.js
+recursive-include defender_antivirus_cloud_manager *.json
+recursive-include defender_antivirus_cloud_manager *.md
+recursive-include defender_antivirus_cloud_manager *.png
+recursive-include defender_antivirus_cloud_manager *.py
+recursive-include defender_antivirus_cloud_manager *.svg
+recursive-include defender_antivirus_cloud_manager *.txt
+recursive-exclude defender_antivirus_cloud_manager *.pyc
