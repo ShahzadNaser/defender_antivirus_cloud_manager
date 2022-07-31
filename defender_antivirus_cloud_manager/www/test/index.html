@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+
+    <!-- ✅ Load CSS file for DataTables  -->
+    <link rel="stylesheet" href="/assets/defender_antivirus_cloud_manager/www/css/jquery.dataTables.min.css" />
+    
+
+    <!-- ✅ load jQuery ✅ -->
+    <script src="/assets/defender_antivirus_cloud_manager/www/js/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+    <!-- ✅ load DataTables ✅ -->
+    <script src="/assets/defender_antivirus_cloud_manager/www/js/jquery.dataTables.min.js"></script>
+
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+  
+</head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+<style>
+    .Row {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+        border-spacing: 8px;
+    }
+
+    .card {
+        display: table-cell;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        width: 210%;
+        height: 140px;
+
+    }
+
+    .card1 {
+        display: table-cell;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        transition: 0.3s;
+        width: 210%;
+        height: 200px;
+
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .container {
+        padding: 2px 16px;
+    }
+
+    #bt {
+        border-radius: 7px;
+        /* background: #8fe2ff; */
+        border-color: #5fe5f566;
+        float: right;
+    }
+
+
+    body {
+        font-family: Arial;
+    }
+
+
+    .tab {
+        overflow: hidden;
+    }
+
+    .tab button {
+        background-color: inherit;
+        float: left;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+    }
+
+    /* Change background color of buttons on hover */
+    .tab button:hover {}
+
+    /* Create an active/current tablink class */
+    .tab button.active {
+        text-decoration: underline;
+        color: #009bfff7;
+    }
+
+    /* Style the tab content */
+    .tabcontent {
+        display: none;
+        padding: 6px 12px;
+        border-top: none;
+    }
+</style>
+
+<body class="bp-nouveau archive post-type-archive post-type-archive-sfwd-courses tribe-js buddyboss-theme sticky-header bb-tribe-events-views-v2 bp-search elementor-default elementor-kit-20002 tribe-theme-buddyboss-theme learndash-cpt learndash-cpt-sfwd-courses learndash-template-ld30 learndash-embed-responsive learndash-theme js bb-page-loaded">
+    <div class="tab">
+        <button class="tablinks" onclick="openCity(event, 'Dashboards')" id="defaultOpen">Dashboards</button>
+        <button class="tablinks" onclick="openCity(event, 'Clients')">Clients</button>
+        <button class="tablinks" onclick="openCity(event, 'Users')">Users</button>
+        <button class="tablinks" onclick="openCity(event, 'Logs')">Logs</button>
+        <button class="tablinks" onclick="show()" style="float:right;color: #085281;"><i class="fa fa-file-excel-o"
+                aria-hidden="true" style="    color: #0a88d885;
+margin-right: 2px;"></i>Export to excel file</button>
+
+    </div>
+
+    <div class="box" style="background:#aeaef229; width 100%; height:300px">
+        <div id="Dashboards" class="tabcontent">
+            <h3>Dashboards</h3>
+            <p>Dashboards is the capital city of England.</p>
+        </div>
+
+
+        <div id="Clients" class="tabcontent">
+            <div class="clients_bar" style="display: flex;
+        justify-content: space-between;">
+                <div class="left">
+        
+                    <input class="form-control" id="exampleDataList" placeholder="Type to search..." style=" display:none;    background: white;
+                        width: 400%;
+                        margin-top: 5px;
+                        margin-bottom: 5px;">
+                </div>
+        
+                <div class="right" style="display:flex;     display: flex; justify-content: flex-end;">
+                  
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"  style=" background: #0e85af;     margin-right: 10px;">Add
+                        client</button>
+                    <button type="button" class="btn btn-outline-info"
+                        style="color:black;    margin-right: 10px;">Import</button>
+                    <button type="button" class="btn btn-danger" style="    margin-right: 10px;">Delete all</button>
+                    <button type="button" class="btn btn-outline-info"><i class="fa fa-refresh" aria-hidden="true"
+                            style="margin-right:4px;"></i>Refresh</button>
+                </div>
+        
+            </div>
+            <h3></h3>
+            <h3>Total Clients </h3>
+            {% for a in r %}
+
+            <p>AC Record
+                {{a.message}}
+            </p>
+
+            {% endfor %}
+
+
+
+            <table id="example" class="display" style="width: 100%">
+                <thead>
+                    <tr style="display:none;">
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    
+
+                    <tr>
+                        <td>UUID <button id="bt"><i class="fa fa-pencil" aria-hidden="true"></i> </button> 
+                        <button  id="bt"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+                        <td>22 <button id="bt"><i class="fa fa-pencil" aria-hidden="true"></i> </button> 
+                            <button  id="bt"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
+                        <td>2 <button id="bt"><i class="fa fa-refresh" aria-hidden="true"></i>
+                        </button> </td>
+                    </tr>
+                
+                </tbody>
+                <tfoot style="display:none;">
+                    <tr>
+                        <th>Name</th>
+                        <th>Position</th>
+                        <th>Office</th>
+                    </tr>
+                </tfoot>
+            </table>
+         
+            
+            <!-- Modal -->
+            
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header" style="border-bottom: none !important;">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -4px !important;">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+
+                  </div>
+                  <div class="modal-body">
+                    <form>
+                      <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">UUID:</label>
+                        <input type="text" class="form-control" id="uuid">
+                        <span id="uuid_error"></span>
+                      </div>
+                      <div class="form-group">
+                        <label for="comment" class="col-form-label">Comment:</label>
+                        <input type="text" class="form-control" id="comment">
+                        <span id="comment_error"></span>
+                      </div>
+
+                      <div class="form-group">
+                        <label for="hostname" class="col-form-label">Hostname:</label>
+                        <input type="text" class="form-control" id="hostname" readonly>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="add-user">Send message</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+    
+            <!-- Your JS code here  -->
+
+        </div>
+
+        <div id="Users" class="tabcontent">
+            <h3>Users</h3>
+            <p>Users is the capital of Japan.</p>
+        </div>
+
+        <div id="Logs" class="tabcontent">
+            <h3>Logs</h3>
+            <p>Logs is the capital of Japan.</p>
+        </div>
+    </div>
+
+
+
+    <script>
+
+
+        function show() {
+            alert("Data Exported")
+        }
+        function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+            $('#example').DataTable();
+            $(document).ready(function () {
+                $('#example').DataTable();
+                console.log("I am Calll")
+            });
+
+
+        }
+
+
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
+
+
+        $('#exampleModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var recipient = button.data('whatever')
+            var modal = $(this)
+            modal.find('.modal-title').text('New message to ' + recipient)
+            modal.find('.modal-body input').val(recipient)
+          })
+
+          function addUser() {
+              alert("Data Saved Successfully!!")
+          }
+
+    </script>
+
+
+
+    <hr>
+    {% block script %}
+    <script src="/assets/defender_antivirus_cloud_manager/www/js/test/index.js"></script>
+    {% endblock %}
+
+     <script>
+        frappe.csrf_token = "{{frappe.session.csrf_token}}";
+    </script>
+
+    <script type="text/javascript" src="/assets/js/libs.min.js?ver=1658305053.0"></script>
+		
+    <script type="text/javascript" src="/assets/js/desk.min.js?ver=1658305053.0"></script>
+    
+    <script type="text/javascript" src="/assets/js/list.min.js?ver=1658305053.0"></script>
+    
+    <script type="text/javascript" src="/assets/js/form.min.js?ver=1658305053.0"></script>
+    
+    <script type="text/javascript" src="/assets/js/control.min.js?ver=1658305053.0"></script>
+    
+    <script type="text/javascript" src="/assets/js/report.min.js?ver=1658305053.0"></script>
+    
+    <script type="text/javascript" src="/assets/js/erpnext.min.js?ver=1658305053.0"></script>
+</body>
+
+</html>
