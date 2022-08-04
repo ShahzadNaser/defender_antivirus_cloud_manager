@@ -33,3 +33,15 @@ body {
     padding : 5px 15px;
   }
   
+
+  .host_input {
+    border: 0.1px solid #bbb7b785 !important;
+    height: 36px !important;
+    border-radius: 4px !important;
+  }
+
+  #edit_host {
+    z-index: 2;
+    margin-left: -4%;
+    border: 0.1px solid #8080801c;
+  }
