@@ -94,6 +94,87 @@ document.querySelector("#add-user").addEventListener('click',
     })
 
 
+    document.querySelector("#edit_host").addEventListener('click',
+    (e) => {
+        
+        let interval_time = document.querySelector("#interval_time").value;
+        let uuid = document.querySelector("#client_uuid").value;
+        fetch('/api/method/defender_antivirus_cloud_manager.utils.update_interval', {
+            method: 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            body: JSON.stringify({
+                uuid : uuid,
+                interval_time : interval_time
+            })
+
+        }).then(r => r.json())
+        .then(r => {
+            if(r.message.success_key == "ok") {
+                alert("Interval Updated Successfully")
+            }
+        })
+
+
+    })
+
+
+
+    document.querySelector("#perform_full_scan").addEventListener('click',
+    (e) => {
+        
+        let uuid = document.querySelector("#client_uuid").value;
+        fetch('/api/method/defender_antivirus_cloud_manager.utils.fullscan', {
+            method: 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            body: JSON.stringify({
+                uuid : uuid
+            })
+
+        }).then(r => r.json())
+        .then(r => {
+            if(r.message.success_key == "ok") {
+                alert("Full Scan Activated")
+            }
+        })
+
+
+    })
+
+
+    document.querySelector("#add_version").addEventListener('click',
+    (e) => {
+        
+        let uuid = document.querySelector("#client_uuid").value;
+        let download_path = document.querySelector("#download-path").value;
+        fetch('/api/method/defender_antivirus_cloud_manager.utils.addversion', {
+            method: 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            body: JSON.stringify({
+                uuid : uuid,
+                download_path : download_path
+
+            })
+
+        }).then(r => r.json())
+        .then(r => {
+            if(r.message.success_key == "ok") {
+                alert("New version Released")
+            }
+        })
+
+
+    })
+
+
     document.querySelector("#add_to_client").addEventListener('click',
     (e) => {
 
@@ -167,6 +248,13 @@ document.querySelector("#add-user").addEventListener('click',
 
     }
 
+    // document.querySelector("#list_of_threat").addEventListener('click', (e) => {
+
+    // }).then( r => r.json())
+    // .then(r => {
+    //     console.log("RR", r)
+    // })
+
     document.querySelector("#update-user").addEventListener('click', (e) => {
     const uuid = document.querySelector("#updateuuid1").value;
     const hostname = document.querySelector("#updatehostname1").value;
@@ -200,5 +288,265 @@ document.querySelector("#add-user").addEventListener('click',
 
        
     })
+
+    function getthreat(uuid) {
+            fetch('/api/method/defender_antivirus_cloud_manager.utils.getThreats', {
+                method: 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'X-Frappe-CSRF-Token': frappe.csrf_token
+                },
+                body: JSON.stringify({
+                    uuid:uuid
+                })
+
+            }).then(r => r.json())
+            .then(r => {
+                console.log("Threat", r.message)
+                document.getElementById("total_threats").textContent = r.message
+
+            })
+
+
+    }
+
+
+
+ 
+
+    function getUserDetails(uuid) {
+        console.log("UUID", uuid)
+        fetch('/api/method/defender_antivirus_cloud_manager.utils.getUserDetails', {
+            method: 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            body: JSON.stringify({
+                uuid:uuid
+            })
+
+        }).then(r => r.json())
+        .then(r => {
+            console.log("Response", r.message)
+             document.getElementById("client_uuid").value = r.message.name
+             document.getElementById("client_host_name").value = r.message.host_name
+
+             document.getElementById("am_engine").textContent = r.message.am_engine
+             document.getElementById("am_product").textContent = r.message.am_product
+             document.getElementById("signature").textContent = r.message.signature
+             document.getElementById("signature1").textContent = r.message.nis_signature
+             document.getElementById("nis_engine").textContent = r.message.nis_engine
+             document.getElementById("agent_version").textContent = r.message.agent_version
+             document.getElementById("last_update").textContent = r.message.last_update
+             document.getElementById("interval_time").value = r.message.interval_time
+
+
+
+             if(r.message.anti_malware == "True") {
+                document.getElementById("anti_malware").textContent = "Enabled"
+                document.getElementById("anti_malware").style.color="rgb(21, 192, 21)"
+             } else if (r.message.anti_malware == "False"){
+             document.getElementById("anti_malware").textContent = "Disabled"
+             document.getElementById("anti_malware").style.color="red"
+
+             }else {
+             document.getElementById("anti_malware").textContent = "Pending"
+             document.getElementById("anti_malware").style.color="#eccf07e6"
+
+
+             }
+             
+             
+             if(r.message.behaviour_monitor == "True") {
+                document.getElementById("behaviour_monitor").textContent = "Enabled"
+                document.getElementById("behaviour_monitor").style.color="rgb(21, 192, 21)"
+             } else if (r.message.behaviour_monitor == "False"){
+             document.getElementById("behaviour_monitor").textContent = "Disabled"
+             document.getElementById("behaviour_monitor").style.color="red"
+
+             }else {
+             document.getElementById("behaviour_monitor").textContent = "Pending"
+             document.getElementById("behaviour_monitor").style.color="#eccf07e6"
+
+
+             }
+
+
+             //signature Update
+             if(r.message.signature_update == "True") {
+                document.getElementById("signature_update").textContent = "OK"
+                document.getElementById("signature_update").style.color="rgb(21, 192, 21)"
+             } else if (r.message.signature_update == "False"){
+             document.getElementById("signature_update").textContent = "Out-of-date"
+             document.getElementById("signature_update").style.color="red"
+
+             }else {
+             document.getElementById("signature_update").textContent = "Pending"
+             document.getElementById("signature_update").style.color="#eccf07e6"
+
+
+             }
+
+             if(r.message.on_access_protection == "True") {
+                document.getElementById("on_access_protection").textContent = "Enabled"
+                document.getElementById("on_access_protection").style.color="rgb(21, 192, 21)"
+             } else if (r.message.behaviour_monitor == "False"){
+             document.getElementById("on_access_protection").textContent = "Disabled"
+             document.getElementById("on_access_protection").style.color="red"
+
+             }else {
+             document.getElementById("on_access_protection").textContent = "Pending"
+             document.getElementById("on_access_protection").style.color="#eccf07e6"
+
+
+             }
+
+
+             //office antivirus
+             if(r.message.office_antivirus == "True") {
+                document.getElementById("office_antivirus").textContent = "Enabled"
+                document.getElementById("office_antivirus").style.color="rgb(21, 192, 21)"
+             } else if (r.message.office_antivirus == "False"){
+             document.getElementById("office_antivirus").textContent = "Disabled"
+             document.getElementById("office_antivirus").style.color="red"
+
+             }else {
+             document.getElementById("office_antivirus").textContent = "Pending"
+             document.getElementById("office_antivirus").style.color="#eccf07e6"
+
+
+             }
+
+             if(r.message.real_time_protection == "True") {
+                document.getElementById("real_time_protection").textContent = "Enabled"
+                document.getElementById("real_time_protection").style.color="rgb(21, 192, 21)"
+             } else if (r.message.behaviour_monitor == "False"){
+             document.getElementById("real_time_protection").textContent = "Disabled"
+             document.getElementById("real_time_protection").style.color="red"
+
+             }else {
+             document.getElementById("real_time_protection").textContent = "Pending"
+             document.getElementById("real_time_protection").style.color="#eccf07e6"
+
+
+             }
+             
+             if(r.message.anti_spyware == "True") {
+                document.getElementById("anti_spyware").textContent = "Enabled"
+                document.getElementById("anti_spyware").style.color="rgb(21, 192, 21)"
+             } else if (r.message.anti_spyware == "False"){
+             document.getElementById("anti_spyware").textContent = "Disabled"
+             document.getElementById("anti_spyware").style.color="red"
+
+             }else {
+             document.getElementById("anti_spyware").textContent = "Pending"
+             document.getElementById("anti_spyware").style.color="#eccf07e6"
+
+
+             }
+
+             //anti_virus
+             if(r.message.anti_virus == "True") {
+                document.getElementById("anti_virus").textContent = "Enabled"
+                document.getElementById("anti_virus").style.color="rgb(21, 192, 21)"
+             } else if (r.message.anti_virus == "False"){
+             document.getElementById("anti_virus").textContent = "Disabled"
+             document.getElementById("anti_virus").style.color="red"
+
+             }else {
+             document.getElementById("anti_virus").textContent = "Pending"
+             document.getElementById("anti_virus").style.color="#eccf07e6"
+
+             }
+
+
+             //network inspection
+             if(r.message.network_inspection_system == "True") {
+                document.getElementById("network_inspection_system").textContent = "Enabled"
+                document.getElementById("network_inspection_system").style.color="rgb(21, 192, 21)"
+             } else if (r.message.network_inspection_system == "False"){
+             document.getElementById("network_inspection_system").textContent = "Disabled"
+             document.getElementById("network_inspection_system").style.color="red"
+
+             }else {
+             document.getElementById("network_inspection_system").textContent = "Pending"
+             document.getElementById("network_inspection_system").style.color="#eccf07e6"
+
+
+             }
+             
+
+             //tamper
+             if(r.message.tamper_protection == "True") {
+                document.getElementById("tamper_protection").textContent = "Enabled"
+                document.getElementById("tamper_protection").style.color="rgb(21, 192, 21)"
+             } else if (r.message.tamper_protection == "False"){
+             document.getElementById("tamper_protection").textContent = "Disabled"
+             document.getElementById("tamper_protection").style.color="red"
+
+             }else {
+             document.getElementById("tamper_protection").textContent = "Pending"
+             document.getElementById("tamper_protection").style.color="#eccf07e6"
+
+             }
+             //Domain
+             if(r.message.domain == "True") {
+                document.getElementById("domain").textContent = "Enabled"
+                document.getElementById("domain").style.color="rgb(21, 192, 21)"
+             } else if (r.message.domain == "False"){
+             document.getElementById("domain").textContent = "Disabled"
+             document.getElementById("domain").style.color="red"
+
+             }else {
+             document.getElementById("domain").textContent = "Pending"
+             document.getElementById("domain").style.color="#eccf07e6"
+
+             }
+
+             if(r.message.public == "True") {
+                document.getElementById("public").textContent = "Enabled"
+                document.getElementById("public").style.color="rgb(21, 192, 21)"
+             } else if (r.message.domain == "False"){
+             document.getElementById("public").textContent = "Disabled"
+             document.getElementById("public").style.color="red"
+
+             }else {
+             document.getElementById("public").textContent = "Pending"
+             document.getElementById("public").style.color="#eccf07e6"
+
+
+             }
+
+             if(r.message.private == "True") {
+                document.getElementById("private").textContent = "Enabled"
+                document.getElementById("private").style.color="rgb(21, 192, 21)"
+             } else if (r.message.domain == "False"){
+             document.getElementById("private").textContent = "Disabled"
+             document.getElementById("private").style.color="red"
+
+             }else {
+             document.getElementById("private").textContent = "Pending"
+             document.getElementById("private").style.color="#eccf07e6"
+
+
+             }
+
+             
+            //  document.getElementById("total_threats").textContent = r.message.total_threat
+
+
+             //system
+             document.getElementById("os").textContent = r.message.os
+             document.getElementById("os_version").textContent = r.message.os_version
+             document.getElementById("manufacturer").textContent = r.message.manufacturer
+             document.getElementById("model").textContent = r.message.model
+             document.getElementById("full_scan_start").textContent = r.message.full_scan_start
+             document.getElementById("full_scan_end").textContent = r.message.full_scan_end
+             document.getElementById("last_full_scan_source").textContent = r.message.last_full_scan_source
+             document.getElementById("last_quick_scan_source").textContent = r.message.last_quick_scan_source
+
+        })
+    }
     
-   
+ 

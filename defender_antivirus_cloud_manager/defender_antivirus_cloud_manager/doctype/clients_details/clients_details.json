@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{client_uuid}-{####}",
+ "autoname": "field:client_uuid",
  "creation": "2022-07-31 10:13:44.390731",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -9,15 +9,59 @@
  "field_order": [
   "client_uuid",
   "comments",
+  "interval_time",
   "column_break_3",
   "host_name",
-  "date"
+  "date",
+  "defender_anti_virus_section",
+  "anti_malware",
+  "anti_spyware",
+  "behaviour_monitor",
+  "tamper_protection",
+  "office_antivirus",
+  "network_inspection_system",
+  "nis_engine",
+  "column_break_13",
+  "on_access_protection",
+  "real_time_protection",
+  "anti_virus",
+  "signature",
+  "nis_signature",
+  "am_product",
+  "am_engine",
+  "section_break_20",
+  "domain",
+  "public",
+  "private",
+  "update_section",
+  "agent_version",
+  "signature_update",
+  "last_update",
+  "system_section",
+  "os",
+  "os_version",
+  "manufacturer",
+  "model",
+  "column_break_33",
+  "full_scan_start",
+  "full_scan_end",
+  "last_full_scan_source",
+  "last_quick_scan_source",
+  "threat_details_section",
+  "table_39",
+  "status_update_section",
+  "full_scan",
+  "new_interval",
+  "column_break_46",
+  "new_version",
+  "download_path"
  ],
  "fields": [
   {
    "fieldname": "client_uuid",
    "fieldtype": "Data",
-   "label": "Client UUID"
+   "label": "Client UUID",
+   "unique": 1
   },
   {
    "fieldname": "comments",
@@ -38,11 +82,236 @@
    "fieldname": "date",
    "fieldtype": "Datetime",
    "label": "Date"
+  },
+  {
+   "fieldname": "defender_anti_virus_section",
+   "fieldtype": "Section Break",
+   "label": "Defender Anti Virus"
+  },
+  {
+   "default": "0",
+   "fieldname": "anti_malware",
+   "fieldtype": "Data",
+   "label": "Anti Malware"
+  },
+  {
+   "default": "0",
+   "fieldname": "anti_spyware",
+   "fieldtype": "Data",
+   "label": "Anti Spyware"
+  },
+  {
+   "default": "0",
+   "fieldname": "anti_virus",
+   "fieldtype": "Data",
+   "label": "Anti Virus"
+  },
+  {
+   "fieldname": "am_engine",
+   "fieldtype": "Data",
+   "label": "AM Engine"
+  },
+  {
+   "fieldname": "am_product",
+   "fieldtype": "Data",
+   "label": "AM Product"
+  },
+  {
+   "fieldname": "signature",
+   "fieldtype": "Data",
+   "label": "Signature"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "behaviour_monitor",
+   "fieldtype": "Data",
+   "label": " Behaviour Monitor"
+  },
+  {
+   "default": "0",
+   "fieldname": "tamper_protection",
+   "fieldtype": "Data",
+   "label": "Tamper Protection"
+  },
+  {
+   "default": "0",
+   "fieldname": "office_antivirus",
+   "fieldtype": "Data",
+   "label": "Office Antivirus"
+  },
+  {
+   "default": "0",
+   "fieldname": "network_inspection_system",
+   "fieldtype": "Data",
+   "label": "Network Inspection System"
+  },
+  {
+   "default": "0",
+   "fieldname": "on_access_protection",
+   "fieldtype": "Data",
+   "label": "On Access Protection"
+  },
+  {
+   "default": "0",
+   "fieldname": "real_time_protection",
+   "fieldtype": "Data",
+   "label": "Real time Protection"
+  },
+  {
+   "fieldname": "section_break_20",
+   "fieldtype": "Section Break",
+   "label": "Firewall Protection"
+  },
+  {
+   "default": "0",
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain"
+  },
+  {
+   "default": "0",
+   "fieldname": "public",
+   "fieldtype": "Data",
+   "label": "Public"
+  },
+  {
+   "default": "0",
+   "fieldname": "private",
+   "fieldtype": "Data",
+   "label": "Private"
+  },
+  {
+   "bold": 1,
+   "fieldname": "update_section",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "agent_version",
+   "fieldtype": "Data",
+   "label": "Agent Version"
+  },
+  {
+   "fieldname": "signature_update",
+   "fieldtype": "Data",
+   "label": "Signature Update"
+  },
+  {
+   "fieldname": "last_update",
+   "fieldtype": "Data",
+   "label": "Last Update"
+  },
+  {
+   "fieldname": "system_section",
+   "fieldtype": "Section Break",
+   "label": "System"
+  },
+  {
+   "fieldname": "os",
+   "fieldtype": "Data",
+   "label": "OS"
+  },
+  {
+   "fieldname": "os_version",
+   "fieldtype": "Data",
+   "label": "OS Version"
+  },
+  {
+   "fieldname": "manufacturer",
+   "fieldtype": "Data",
+   "label": "Manufacturer"
+  },
+  {
+   "fieldname": "model",
+   "fieldtype": "Data",
+   "label": "Model"
+  },
+  {
+   "fieldname": "column_break_33",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "full_scan_start",
+   "fieldtype": "Data",
+   "label": "Full Scan Start"
+  },
+  {
+   "fieldname": "full_scan_end",
+   "fieldtype": "Data",
+   "label": "Full Scan End"
+  },
+  {
+   "fieldname": "last_full_scan_source",
+   "fieldtype": "Data",
+   "label": "Last Full Scan Source"
+  },
+  {
+   "fieldname": "last_quick_scan_source",
+   "fieldtype": "Data",
+   "label": "Last Quick Scan Source"
+  },
+  {
+   "fieldname": "nis_engine",
+   "fieldtype": "Data",
+   "label": "NIS Engine"
+  },
+  {
+   "fieldname": "table_39",
+   "fieldtype": "Table",
+   "options": "Threat  Details"
+  },
+  {
+   "fieldname": "threat_details_section",
+   "fieldtype": "Section Break",
+   "label": "Threat Details"
+  },
+  {
+   "fieldname": "nis_signature",
+   "fieldtype": "Data",
+   "label": "Nis Signature"
+  },
+  {
+   "fieldname": "interval_time",
+   "fieldtype": "Data",
+   "label": "Interval"
+  },
+  {
+   "fieldname": "new_interval",
+   "fieldtype": "Data",
+   "label": "New Interval"
+  },
+  {
+   "fieldname": "full_scan",
+   "fieldtype": "Data",
+   "label": "Full Scan"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "status_update_section",
+   "fieldtype": "Section Break",
+   "label": "Status Update"
+  },
+  {
+   "fieldname": "new_version",
+   "fieldtype": "Data",
+   "label": "New Version"
+  },
+  {
+   "fieldname": "download_path",
+   "fieldtype": "Data",
+   "label": "Download Path"
+  },
+  {
+   "fieldname": "column_break_46",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-07-31 14:00:37.502204",
+ "modified": "2022-08-15 16:47:12.405680",
  "modified_by": "Administrator",
  "module": "Defender Antivirus Cloud Manager",
  "name": "Clients Details",

@@ -6,8 +6,11 @@
 
     <!-- ✅ Load CSS file for DataTables  -->
     <link rel="stylesheet" href="/assets/defender_antivirus_cloud_manager/www/css/jquery.dataTables.min.css" />
-    
 
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+  
     <!-- ✅ load jQuery ✅ -->
     <script src="/assets/defender_antivirus_cloud_manager/www/js/jquery-3.6.0.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -25,6 +28,7 @@
         <!--  ✅ Frappe Resources  ✅ -->
         <link rel="icon" href="/assets/erpnext/images/erpnext-favicon.svg" type="image/x-icon">
         <link type="text/css" rel="stylesheet" href="/assets/css/erpnext.css?ver=1650788325.0">
+        <link type="text/css" rel="stylesheet" href="/assets/css/desk.min.css">
 
         <link rel="stylesheet" href="/assets/defender_antivirus_cloud_manager/www/bootstrap-4.2.1/css/bootstrap.min.css">
         <script>
@@ -183,9 +187,15 @@
 
 .div_p {
  
-    padding-top: 6%;
+    padding-top: 9%;
     padding-left: 6%;
+    margin-bottom: 4px !important;
   
+}
+
+.child-divp {
+  font-size: 10px;
+  margin-left: 6%;
 }
 
 
@@ -204,348 +214,655 @@ margin-right: 2px;"></i>Export to excel file</button>
 
     </div>
 
-    <div class="box" style="background:#aeaef229; width 100%; height:300px">
-        <div id="Dashboards" class="tabcontent">
-            <h3>Dashboards</h3>
-            <p>Dashboards is the capital city of England.</p>
-        </div>
-
-
-        <div id="Clients" class="tabcontent">
-            <div class="clients_bar" style="display: flex;
-        justify-content: space-between;">
-                <div class="left">
-        
-                    <input class="form-control" id="exampleDataList" placeholder="Type to search..." style=" display:none;    background: white;
-                        width: 400%;
-                        margin-top: 5px;
-                        margin-bottom: 5px;">
-                </div>
-        
-                <div class="right" style="display:flex;     display: flex; justify-content: flex-end;">
-                  
-                    <button type="button" id="add_to_client" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"  style=" background: #0e85af;     margin-right: 10px;">Add
-                        client</button>
-                    <button type="button" class="btn btn-outline-info"
-                        style="color:black;    margin-right: 10px;">Import</button>
-                    <button type="button" class="btn btn-danger" style="    margin-right: 10px;">Delete all</button>
-                    <button type="button" class="btn btn-outline-info"><i class="fa fa-refresh" aria-hidden="true"
-                            style="margin-right:4px;"></i>Refresh</button>
-                </div>
-        
-            </div>
-            <h3></h3>
-            <h3>Total Clients </h3>
-            {% for a in r %}
-
-            <p>AC Record
-                {{a.message}}
-            </p>
-
-            {% endfor %}
-
-
-            {% set clients = frappe.db.sql(""" select client_uuid,comments,host_name,name from `tabClients Details` """) %}
-            <table id="example" class="display" style="width: 100%">
-                <thead>
-                    <tr style="display:none;">
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    
-
-                    {% for c in clients %}
-                    <tr>
-                        <td>UUID  {{c[0]}}<button id="updatebt"  onclick="updateRecord(`{{c[0]}}`, `{{c[1]}}`, `{{c[2]}}`, `{{c[3]}}`)" data-toggle="modal" data-target="#updateexampleModal"><i class="fa fa-pencil" aria-hidden="true"></i> </button> 
-                             <button  id="deletebt" onclick="delRecord(`{{c[3]}}`)" data-toggle="modal" data-target="#deleteexampleModal"><i class="fa fa-trash" aria-hidden="true"></i></button>
-                        </td>
-                        <td> {{c[1]}} <button id="updatebt" onclick="updateRecord(`{{c[0]}}`, `{{c[1]}}`, `{{c[2]}}`, `{{c[3]}}`)" data-toggle="modal" data-target="#updateexampleModal"><i class="fa fa-pencil" aria-hidden="true"></i> </button> 
-                            <button  id="deletebt"  onclick="delRecord(`{{c[3]}}`)" data-toggle="modal" data-target="#deleteexampleModal"><i class="fa fa-trash" aria-hidden="true"></i></button></td>
-                        <td>{{c[2]}} 
-                          <button id="bt" type="button"  data-toggle="modal" data-target=".bd-example-modal-lg"><i class="fa fa-refresh" aria-hidden="true"></i></button> 
-                        </td>
-                    </tr>
-                    {% endfor %}
-                
-                </tbody>
-                <tfoot style="display:none;">
-                    <tr>
-                        <th>Name</th>
-                        <th>Position</th>
-                        <th>Office</th>
-                    </tr>
-                </tfoot>
-            </table>
-
-
-            <!--HOST Details Large Modal-->
-
-
-            <div class="modal fade bd-example-modal-lg" id="hostModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg" style="max-width: 1100px !important ">
-                <div class="modal-content">
-                  <div class="host" style="padding: 3%;">
-
-                      <input type="text" class="host_input" style="width: 15%;color:#57beff" value="Host detail">
-                      <input type="text" class="host_input" style="width: 36%;" value="UUID:">
-                      <input type="text" class="host_input" style="width: 13%;">
-                      <input type="text" class="host_input"style="width: 10%;" value="240 min"><button id="edit_host" style="z-index: 2;margin-left: -2.8%;
-                      border:none; background:none;">
-                        <i class="fa fa-pencil" aria-hidden="true"></i></button>
-                      <button style=" background: no-repeat;border-color: #0985ff8c;border-radius: 6px;color: #0898d3; cursor:pointer">Perform Full Scan</button>
-                      <button style="width: 8%; width: 8%; background: no-repeat;border-color: #0985ff8c;border-radius: 6px;color: #0898d3; cursor:pointer">Back</button>
-
-                      <div class="host_details">
-                        <div class="inner_host_details">
-                          <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Defender Anti-Virus</h1>
-
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">Anti-malware: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Anti-spyware: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Anti-virus: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-
-                                </div>
-                              </div>
-
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">Behaviour Monitor: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Tamper Protection: <b style="color:rgb(218, 14, 14)">Disabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Office Antivirus: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                              </div>
-
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">Network Inspection System: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">On-Access Protection: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Real-time Protection: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                              </div>
-
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div2">
-                                  <p class="div_d" style="padding: 4%;">Threat Fount: <b style="color:rgb(214, 12, 12)">5</b></p>
-                                </div>
-                                <div class="div1" style="background-color: rgb(23, 98, 130); padding:3%; color:white"> See list of found threats</div>
-                              </div>
-
-                              <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Firewall Protection</h1>
+    <div class="box" style="    background: #83bff226;
+    height: auto;">
+      <div id="Dashboards" class="tabcontent" style="background:aliceblue !important">
+        <h3>Dashboards</h3>
+        <div class="container page-body">
+          <div class="page-toolbar hide">
+            <div class="container"> </div>
+          </div>
+          <div class="page-wrapper">
+            <div class="page-content">
+              <div class="dashboard" style="overflow: visible">
+                <div class="dashboard-graph">
+                  <div class="widget-group ">
+                    <div class="widget-group-head">
     
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">Domain: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Public: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Private: <b style="color:rgb(218, 14, 14)">Disabled</b></p>
-
-                                </div>
-                              </div>
-
-
-                              <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Update</h1>
-    
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">Agent version: <b style="color:rgb(21, 192, 21)">Enabled</b></p>
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Signature update: <b style="color:rgb(192, 61, 21)">Out-of-date</b></p>
-
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Last update: <b style="color:rgb(29, 39, 29)">Enabled</b></p>
-
-                                </div>
-                              </div>
-
-
-
-                              <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">System</h1>
-    
-                              <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
-                                <div class="div1">
-                                  <p class="div_p">OS: <b style="color:rgb(29, 39, 29)"></b></p>
-
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">OS version: <b style="color:rgb(29, 39, 29)"></b></p>
-
-                                </div>
-                                <div class="div1">
-                                  <p class="div_p">Manufacturer: <b style="color:rgb(29, 39, 29)"></b></p>
-
-                                </div>
-
-
-                                <div class="div1">
-                                  <p class="div_p">Model: <b style="color:rgb(29, 39, 29)"></b></p>
-
-                                </div>
-                                <div class="div1"></div>
-                                <div class="div1"></div>
-                              </div>
-
+                      <div class="widget-group-control"></div>
+                    </div>
+                    <div class="widget-group-body grid-col-3">
+                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="New Loans">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label">Threat Protection issue</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
                         </div>
-
+                        <div class="widget-body">
+                          <div class="widget-content">
+                            <div class="number" style="color:red">12</div>
+                          </div>
+                        </div>
+                        <div class="widget-footer">
+                        </div>
                       </div>
-                    
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!--Host Detals END-->
-         
-            
-            <!-- Modal -->
-            
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content" style="    border-radius: 21px !important;">
-                  <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -4px !important;">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-
-                  </div>
-                  <div class="modal-body">
-                    <form>
-                      <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">UUID:</label>
-                        <input type="text" class="form-control" id="uuid">
-                        <span id="uuid_error"></span>
+                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Active Loans">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label">Firewall issue</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="widget-body">
+                          <div class="widget-content">
+                            <div class="number" style="color:#dcbf02a3;">28</div>
+                          </div>
+                        </div>
+                        <div class="widget-footer">
+                        </div>
                       </div>
-                      <div class="form-group">
-                        <label for="comment" class="col-form-label">Comment:</label>
-                        <input type="text" class="form-control" id="comment">
-                        <span id="comment_error"></span>
+                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Closed Loans">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label">Signature out dated</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="widget-body">
+                          <div class="widget-content">
+                            <div class="number" style="color:blue">0</div>
+                          </div>
+                        </div>
+                        <div class="widget-footer">
+                        </div>
                       </div>
-
-                      <div class="form-group">
-                        <label for="hostname" class="col-form-label">Hostname:</label>
-                        <input type="text" class="form-control" id="hostname" readonly>
+                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Total Disbursed">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label">Fully protected</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="widget-body">
+                          <div class="widget-content">
+                            <div class="number" style="color:green">51</div>
+                          </div>
+                        </div>
+                        <div class="widget-footer">
+                        </div>
                       </div>
-                    </form>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="add-user">Send message</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-    
-            <!-- Your JS code here  -->
-
-            <!--Update UUID and Comments-->
-
-            <div class="modal fade" id="updateexampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content" style="    border-radius: 21px !important;">
-                    <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -4px !important;">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-  
-                    </div>
                   
-                    <div class="updateform">
-                      <input type="text" class="ac" id="updateuuid1">
-                      <input type="text" class="ac"  id="updatecomment1" >
-                      <input type="text" class="ac"  id="updatehostname1" readonly>
-
-                      <input type="text" class="ac"  id="updatename1" readonly>
-
                     </div>
-                   
-                    <div class="modal-footer">
-                      <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary" id="update-user">Update</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              <style>
-                .updateform {
-                  padding:3%;
-                }
-                .ac {
-                  width: 100%;
-                  border-color: #d4d3d16b;
-                  height: 38px;
-                  border-radius: 6px;
-                  margin-bottom: 16px;
-                }
-              </style>
 
-            <!--End Update uuid and comments-->
+                    <!-- List of Threats -->
+                     <div class="widget-group-body grid-col-2" style="margin-top: 2%;">
+                      <div class="widget   widget-shadow    number-widget-box" data-widget-name="Closed Loans" style="height: auto !important;">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label" style="font-size: 20px;font-weight: bold;font-family: inherit;">Top 10 threats</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="widget-body">
+                          <div class="widget-content" style="padding-top: 2px !important;">
+                            <div class="number" style="color:blue">0</div>
+                          </div>
+                      
+                        </div>
+                        <div class="widget-footer">
+                        </div>
+                      </div>
+                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Total Disbursed" style="height: auto !important;">
+                        <div class="widget-head">
+                          <div class="widget-label">
+                            <div class="widget-title">
+                              <div class="number-label"  style="font-size: 20px;font-weight: bold;font-family: inherit;">Top 10 infected hosts (uuid, comment, hostname)</div>
+                            </div>
+                            <div class="widget-subtitle"></div>
+                          </div>
+                          <div class="widget-control">
+                            <div class="card-actions dropdown pull-right">
+                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                ...
+                              </a>
+                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                <li class="dropdown-item">
+                                  <a data-action="action-refresh">Refresh</a>
+                                </li>
+                                <li class="dropdown-item">
+                                  <a data-action="action-edit">Edit</a>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="widget-body">
+                          <div class="widget-content" style="padding-top: 2px !important;">
+                            <div class="number" style="color:green">51</div>
+                          </div>
+                        </div>
+                        <div class="widget-footer">
+                        </div>
+                      </div>
 
-              <!--Delete UUID and Comments-->
-
-              <div class="modal fade" id="deleteexampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content" style="border-radius: 21px !important;">
-                    <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -4px !important;">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-  
-                    </div>
-                    <h5 style="color: #083fd5; margin-left:5% !important;">Delete Record</h5>
-
-                    <p style="margin-left:5% !important;">Are you sure you want to delete!!</p>
-                    <div class="form-group" style="display: none;">
-                      <label for="userid" class="col-form-label">UUID:</label>
-                      <input type="text" class="form-control" id="userid" readonly>
-                    </div>
+                     </div>
+                     <div class="charts" style="max-height: 400px;">
+                      <canvas id="chart" width="400" height="400"></canvas>
+                     </div>
                     
-                    <div class="modal-footer">
-                      <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                      <button type="button" id="delete-one-record" class="btn btn-danger" id="delete-user">Confirm</button>
-                    </div>
+                      <script src="/assets/defender_antivirus_cloud_manager/www/js/charts.js"></script>
+
+
                   </div>
+    
                 </div>
               </div>
-
-            <!--End Delte uuid and comments-->
-
+            </div>
+          </div>
         </div>
-
-        <div id="Users" class="tabcontent">
-            <h3>Users</h3>
-            <p>Users is the capital of Japan.</p>
+      </div>
+    
+    
+      <div id="Clients" class="tabcontent">
+        <div class="clients_bar" style="display: flex;
+            justify-content: space-between;">
+          <div class="left">
+    
+            <input class="form-control" id="exampleDataList" placeholder="Type to search..." style=" display:none;    background: white;
+                            width: 400%;
+                            margin-top: 5px;
+                            margin-bottom: 5px;">
+          </div>
+    
+          <div class="right" style="display:flex;     display: flex; justify-content: flex-end;">
+    
+            <button type="button" id="add_to_client" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+              style=" background: #0e85af;     margin-right: 10px;">Add
+              client</button>
+            <button type="button" class="btn btn-outline-info" style="color:black;    margin-right: 10px;">Import</button>
+            <button type="button" class="btn btn-danger" style="    margin-right: 10px;">Delete all</button>
+            <button type="button" class="btn btn-outline-info"><i class="fa fa-refresh" aria-hidden="true"
+                style="margin-right:4px;"></i>Refresh</button>
+          </div>
+    
         </div>
-
-        <div id="Logs" class="tabcontent">
-            <h3>Logs</h3>
-            <p>Logs is the capital of Japan.</p>
+        <h3></h3>
+        <h3>Total Clients </h3>
+        {% for a in r %}
+    
+        <p>AC Record
+          {{a.message}}
+        </p>
+    
+        {% endfor %}
+    
+    
+        {% set clients = frappe.db.sql(""" select client_uuid,comments,host_name,name from `tabClients Details` """) %}
+        <table id="example" class="display" style="width: 100%">
+          <thead>
+            <tr style="display:none;">
+              <th>Name</th>
+              <th>Position</th>
+              <th>Office</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+    
+    
+    
+            {% for c in clients %}
+            <tr>
+              <td>UUID {{c[0]}}<button id="updatebt" onclick="updateRecord(`{{c[0]}}`, `{{c[1]}}`, `{{c[2]}}`, `{{c[3]}}`)"
+                  data-toggle="modal" data-target="#updateexampleModal"><i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+                <button id="deletebt" onclick="delRecord(`{{c[3]}}`)" data-toggle="modal"
+                  data-target="#deleteexampleModal"><i class="fa fa-trash" aria-hidden="true"></i></button>
+              </td>
+              <td> {{c[1]}} <button id="updatebt" onclick="updateRecord(`{{c[0]}}`, `{{c[1]}}`, `{{c[2]}}`, `{{c[3]}}`)"
+                  data-toggle="modal" data-target="#updateexampleModal"><i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+                <button id="deletebt" onclick="delRecord(`{{c[3]}}`)" data-toggle="modal"
+                  data-target="#deleteexampleModal"><i class="fa fa-trash" aria-hidden="true"></i></button>
+              </td>
+              <td>{{c[2]}}
+                <button id="bt" type="button" onclick="getUserDetails(`{{c[0]}}`);getthreat(`{{c[0]}}`)" data-toggle="modal"
+                  data-target=".bd-example-modal-lg"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+              </td>
+            </tr>
+            {% endfor %}
+    
+          </tbody>
+          <tfoot style="display:none;">
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Office</th>
+            </tr>
+          </tfoot>
+        </table>
+    
+    
+    
+    
+        <!--HOST Details Large Modal-->
+    
+    
+        <div class="modal fade bd-example-modal-lg" id="hostModal" onShow="initialize()" tabindex="-1" role="dialog"
+          aria-labelledby="myLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" style="max-width: 1100px !important ">
+            <div class="modal-content">
+              <div class="host" style="padding: 3%;">
+    
+                <input type="text" class="host_input" style="width: 15%;color:#57beff" value="Host detail" readonly>
+                <input type="text" class="host_input" id="client_uuid" style="width: 36%;" value="" readonly>
+                <input type="text" class="host_input" id="client_host_name" style="width: 13%;" value="" readonly>
+                <input type="text" class="host_input" style="width: 10%;" value="" id="interval_time">
+                <button id="edit_host" style="z-index: 2;margin-left: -2.8%; border:none; background:none;">
+                  <i class="fa fa-pencil" aria-hidden="true"></i></button>
+                <button
+                  style=" background:rgb(23, 98, 130);;border-color: #0985ff8c;border-radius: 6px;color: #f7f7f7; cursor:pointer"
+                  id="perform_full_scan">Perform Full Scan</button>
+                <button
+                  style="width: 8%; width: 8%; background: no-repeat;border-color: #0985ff8c;border-radius: 6px;color: #0898d3; cursor:pointer">Back</button>
+    
+    
+    
+                <div class="host_details">
+                  <div class="new_version" style="padding-left: 1%;padding-top: 1%;">
+                    <input type="checkbox" id="new_version_avail"><label for="new_version_avail" style="margin-left: .5%;    color: #585555d9;
+                              font-size: 14px;
+                              font-family: revert;">New client software release</label><br>
+                    <label for="" style="color: #585555d9; font-size: 14px;font-family: revert;">New client software
+                      URL:</label><input id="download-path" type="text" value="" style="margin-left: 0.5%;width: 80%;border: 1px solid #80808042;
+                              border-radius: 5px; padding-left:7px;">
+                    <button class="btn btn-primary" id="add_version" style="background:rgb(23, 98, 130);">Save Version
+                      Detail</button>
+                  </div>
+                  <div class="inner_host_details">
+                    <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Defender Anti-Virus</h1>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">Anti-malware: <b style="color:rgb(21, 192, 21)"><span id="anti_malware"></span></b>
+                        </p>
+                        <div class="child-divp">
+                          <span id="child_div">AM Engine: <small id="am_engine" style="font-weight: bold;"></small></span>
+                          <span id="child_div" style="margin-left: 4%; ">AM Product: <small id="am_product"
+                              style="font-weight: bold;"></small></span>
+                        </div>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Anti-spyware: <b style="color:rgb(21, 192, 21)"><span id="anti_spyware"></span></b>
+                        </p>
+                        <div class="child-divp">
+                          <span id="child_div">Signature: <small id="signature" style="font-weight: bold;"></small></span>
+                        </div>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Anti-virus: <b style="color:rgb(21, 192, 21)"><span id="anti_virus"></span></b></p>
+    
+                      </div>
+                    </div>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">Behaviour Monitor: <b style="color:rgb(21, 192, 21)"><span
+                              id="behaviour_monitor"></span></b></p>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Tamper Protection: <b style="color:rgb(218, 14, 14)"><span
+                              id="tamper_protection"></span></b></p>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Office Antivirus: <b style="color:rgb(21, 192, 21)"><span
+                              id="office_antivirus"></span></b></p>
+                      </div>
+                    </div>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">Network Inspection System: <b style="color:rgb(21, 192, 21)"><span
+                              id="network_inspection_system"></span></b></p>
+                        <div class="child-divp">
+                          <span id="child_div">NIS Engine: <small id="nis_engine" style="font-weight: bold;"></small></span>
+                          <span id="child_div" style="margin-left: 4%; ">Signature: <small id="signature1"
+                              style="font-weight: bold;"></small></span>
+                        </div>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">On-Access Protection: <b><span id="on_access_protection"></span></b></p>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Real-time Protection: <b> <span id="real_time_protection"></span></b></p>
+                      </div>
+                    </div>
+    
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div2">
+                        <p class="div_d" style="padding: 4%;">Threat Found: <b style="color:rgb(214, 12, 12)"><span
+                              id="total_threats"></span></b></p>
+                      </div>
+                      <div class="div1"
+                        style="background-color: rgb(23, 98, 130); padding:3%; color:white; display:pointer;"
+                        id="list_of_threat"> See list of found threats</div>
+                    </div>
+    
+                    <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Firewall Protection</h1>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">Domain: <b><span id="domain"></span></b></p>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Public: <b><span id="public"></span></b></p>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Private: <b><span id="private"></span> </b></p>
+    
+                      </div>
+                    </div>
+    
+    
+                    <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">Update</h1>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">Agent version: <b style="color:rgb(21, 192, 21)"><span
+                              id="agent_version"></span></b></p>
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Signature update: <b style="color:rgb(192, 61, 21)"><span
+                              id="signature_update"></span></b></p>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Last update: <b style="color:rgb(29, 39, 29)"><span id="last_update"></span></b>
+                        </p>
+    
+                      </div>
+                    </div>
+    
+    
+    
+                    <h1 style="font-size: 16px;font-weight: bold; padding-top: 10px;">System</h1>
+    
+                    <div class="row_box_one" style="display: flex; flex-wrap: wrap;">
+                      <div class="div1">
+                        <p class="div_p">OS: <span id="os" style="font-weight: bold;"></span> <b
+                            style="color:rgb(29, 39, 29)"></b></p>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">OS version: <span id="os_version" style="font-weight: bold;"></span> <b
+                            style="color:rgb(29, 39, 29)"></b></p>
+    
+                      </div>
+                      <div class="div1">
+                        <p class="div_p">Manufacturer:<span id="manufacturer" style="font-weight: bold;"></span> <b
+                            style="color:rgb(29, 39, 29)"></b></p>
+    
+                      </div>
+    
+    
+                      <div class="div1">
+                        <p class="div_p">Model: <span id="model" style="font-weight: bold;"></span> <b
+                            style="color:rgb(29, 39, 29)"></b></p>
+    
+                      </div>
+                      <div class="div1" style="padding: 2% !important;">
+                        <p class="div_s" style="margin: 0px !important;">Full Scan Start: <span id="full_scan_start"
+                            style="font-weight: bold;"></span></p>
+                        <p class="div_s" style="margin: 0px !important;">Full Scan End: <span id="full_scan_end"
+                            style="font-weight: bold;"></span></p>
+                      </div>
+                      <div class="div1" style="padding: 2% !important;">
+                        <p class="div_s" style="margin: 0px !important;">Last Full Sacan Source: <span
+                            id="last_full_scan_source" style="font-weight: bold;"></span></p>
+                        <p class="div_s" style="margin: 0px !important;">Last Quick Scan Source: <span
+                            id="last_quick_scan_source" style="font-weight: bold;"></span></p>
+    
+                      </div>
+                    </div>
+    
+                  </div>
+    
+                </div>
+    
+              </div>
+            </div>
+          </div>
         </div>
+    
+        <!--Host Detals END-->
+    
+    
+        <!-- Modal -->
+    
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content" style="    border-radius: 21px !important;">
+              <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  style="margin-top: -4px !important;">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="recipient-name" class="col-form-label">UUID:</label>
+                    <input type="text" class="form-control" id="uuid">
+                    <span id="uuid_error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label for="comment" class="col-form-label">Comment:</label>
+                    <input type="text" class="form-control" id="comment">
+                    <span id="comment_error"></span>
+                  </div>
+    
+                  <div class="form-group">
+                    <label for="hostname" class="col-form-label">Hostname:</label>
+                    <input type="text" class="form-control" id="hostname" readonly>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary"
+                  data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="add-user">Send message</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+    
+        <!-- Your JS code here  -->
+    
+        <!--Update UUID and Comments-->
+    
+        <div class="modal fade" id="updateexampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content" style="    border-radius: 21px !important;">
+              <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  style="margin-top: -4px !important;">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    
+              </div>
+    
+              <div class="updateform">
+                <input type="text" class="ac" id="updateuuid1">
+                <input type="text" class="ac" id="updatecomment1">
+                <input type="text" class="ac" id="updatehostname1" readonly>
+    
+                <input type="text" class="ac" id="updatename1" readonly>
+    
+              </div>
+    
+              <div class="modal-footer">
+                <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary"
+                  data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="update-user">Update</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <style>
+          .updateform {
+            padding: 3%;
+          }
+    
+          .ac {
+            width: 100%;
+            border-color: #d4d3d16b;
+            height: 38px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+          }
+        </style>
+    
+        <!--End Update uuid and comments-->
+    
+        <!--Delete UUID and Comments-->
+    
+        <div class="modal fade" id="deleteexampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content" style="border-radius: 21px !important;">
+              <div class="modal-header" style="border-bottom: none !important; padding-top: 0px !important;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                  style="margin-top: -4px !important;">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+    
+              </div>
+              <h5 style="color: #083fd5; margin-left:5% !important;">Delete Record</h5>
+    
+              <p style="margin-left:5% !important;">Are you sure you want to delete!!</p>
+              <div class="form-group" style="display: none;">
+                <label for="userid" class="col-form-label">UUID:</label>
+                <input type="text" class="form-control" id="userid" readonly>
+              </div>
+    
+              <div class="modal-footer">
+                <button type="button" style="color: #fff;background-color: #b23cfd;" class="btn btn-secondary"
+                  data-dismiss="modal">Close</button>
+                <button type="button" id="delete-one-record" class="btn btn-danger" id="delete-user">Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <!--End Delte uuid and comments-->
+    
+      </div>
+    
+      <div id="Users" class="tabcontent">
+        <h3>Users</h3>
+        <p>Users is the capital of Japan.</p>
+      </div>
+    
+      <div id="Logs" class="tabcontent">
+        <h3>Logs</h3>
+        <p>Logs is the capital of Japan.</p>
+      </div>
     </div>
 
 
@@ -633,6 +950,7 @@ margin-right: 2px;"></i>Export to excel file</button>
     <script type="text/javascript" src="/assets/js/control.min.js?ver=1634032939.0"></script>
     <script type="text/javascript" src="/assets/js/report.min.js?ver=1634032939.0"></script>
     <script type="text/javascript" src="/assets/js/erpnext.min.js?ver=1634032939.0"></script>
+   
 
 
 
