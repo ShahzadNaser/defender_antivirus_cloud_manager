@@ -31,7 +31,6 @@ document.querySelector("#add-user").addEventListener('click',
 
         let uuid = document.querySelector("#uuid").value;
         let comment = document.querySelector("#comment").value;
-        let host_name = document.querySelector("#hostname").value;
         // console.log("Agree", user_agreed)
 
 
@@ -59,8 +58,7 @@ document.querySelector("#add-user").addEventListener('click',
                     },
                     body: JSON.stringify({
                         uuid: uuid,
-                        comment: comment,
-                        hostname: host_name
+                        comment: comment
                     })
                 })
                 .then(r => r.json())
@@ -70,9 +68,14 @@ document.querySelector("#add-user").addEventListener('click',
                     if(r.message.success_key == "ok") {
                         regmessage.innerHTML = '';
                         regmessage.innerHTML += `Send Message`
-                        console.log("Result", r.message)
-                    } else {
+                        alert("Client add Successfully")
+                    } else if(r.message.success_key == "exists"){
+                        regmessage.innerHTML = '';
+                        regmessage.innerHTML += `Send Message`
+                        alert("Client Already Exists with given UUID")
 
+                    }else {
+                        alert("Error")
                     }
                       
                   
@@ -302,7 +305,6 @@ document.querySelector("#add-user").addEventListener('click',
 
             }).then(r => r.json())
             .then(r => {
-                console.log("Threat", r.message)
                 document.getElementById("total_threats").textContent = r.message
 
             })

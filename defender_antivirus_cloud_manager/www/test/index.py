@@ -4,10 +4,15 @@ no_cache = 1
 
 
 def get_context(context):
-    url1 = "https://jsonplaceholder.typicode.com/albums"
-    url = "https://defender.bloomlink.mn/api/method/defender_antivirus_cloud_manager.utils.get_defender"
-    res = requests.get(url, headers={"Authorization":"Token c90bb697dc9ea0a:4040d780bc82e81", "uuid":"CB51F1AB-5BB0-11EB-9169-182649E82820"})
-    data = res.text
-    parse_json = json.loads(data.message.sysinfo)
-    context.abc = res
-    context.r = parse_json
+    defender_status = frappe.db.sql(""" select count(name) as name from `tabClients Details` where anti_malware='false' or anti_spyware='false' or real_time_protection = 'false' or on_access_protection = 'false'""",as_dict=True)
+    fully_protected_status = frappe.db.sql(""" select count(name) as name from `tabClients Details` where anti_malware='false' or anti_spyware='false' or real_time_protection = 'false' or on_access_protection = 'false'\
+    or domain='false' or public='false' or private = 'false' or signature_update='true'""",as_dict=True)
+    firewall_status = frappe.db.sql(""" select count(name) as name from `tabClients Details` where domain='false' or public='false' or private = 'false'""",as_dict=True)
+    signature_update = frappe.db.sql(""" select count(name) as name from `tabClients Details` where signature_update='true' """,as_dict=True)
+    context.top_threats = frappe.db.sql(""" select threatname,COUNT(name) as name from `tabThreat  Details` GROUP BY threatname """, as_dict=True)
+    context.top_hosts = frappe.db.sql(""" select c.name,c.comments,c.host_name,COUNT(t.name) as threat from `tabClients Details` as c left join `tabThreat  Details` as t on t.parent=c.name GROUP BY c.name """, as_dict=True)
+    context.defender_status = defender_status
+    context.firewall_status = firewall_status
+    context.signature_update = signature_update
+    context.fully_protected_status = fully_protected_status
+    return context

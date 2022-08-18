@@ -206,16 +206,16 @@
     <div class="tab">
         <button class="tablinks" onclick="openCity(event, 'Dashboards')" id="defaultOpen">Dashboards</button>
         <button class="tablinks" onclick="openCity(event, 'Clients')">Clients</button>
-        <button class="tablinks" onclick="openCity(event, 'Users')">Users</button>
         <button class="tablinks" onclick="openCity(event, 'Logs')">Logs</button>
         <button class="tablinks" onclick="show()" style="float:right;color: #085281;"><i class="fa fa-file-excel-o"
                 aria-hidden="true" style="    color: #0a88d885;
-margin-right: 2px;"></i>Export to excel file</button>
+            margin-right: 2px;"></i>Export to excel file</button>
 
     </div>
 
-    <div class="box" style="    background: #83bff226;
-    height: auto;">
+    {% with sys = frappe.session.user %}
+    {% set us = frappe.db.sql(""" select first_name, user_type from `tabUser` where first_name=%s or email=%s""", (sys,sys)) %}
+    <div class="box" style="background: #83bff226;height: auto; {% if frappe.session.user == 'Guest' %} display:none; {% else %} {% endif %} ">
       <div id="Dashboards" class="tabcontent" style="background:aliceblue !important">
         <h3>Dashboards</h3>
         <div class="container page-body">
@@ -236,7 +236,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         <div class="widget-head">
                           <div class="widget-label">
                             <div class="widget-title">
-                              <div class="number-label">Threat Protection issue</div>
+                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Threat Protection issue</div>
                             </div>
                             <div class="widget-subtitle"></div>
                           </div>
@@ -258,7 +258,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         </div>
                         <div class="widget-body">
                           <div class="widget-content">
-                            <div class="number" style="color:red">12</div>
+                            <div class="number" style="color:red">{{defender_status[0].name}}</div>
                           </div>
                         </div>
                         <div class="widget-footer">
@@ -268,7 +268,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         <div class="widget-head">
                           <div class="widget-label">
                             <div class="widget-title">
-                              <div class="number-label">Firewall issue</div>
+                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Firewall issue</div>
                             </div>
                             <div class="widget-subtitle"></div>
                           </div>
@@ -290,7 +290,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         </div>
                         <div class="widget-body">
                           <div class="widget-content">
-                            <div class="number" style="color:#dcbf02a3;">28</div>
+                            <div class="number" style="color:#dcbf02a3;">{{firewall_status[0].name}}</div>
                           </div>
                         </div>
                         <div class="widget-footer">
@@ -300,7 +300,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         <div class="widget-head">
                           <div class="widget-label">
                             <div class="widget-title">
-                              <div class="number-label">Signature out dated</div>
+                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Signature out dated</div>
                             </div>
                             <div class="widget-subtitle"></div>
                           </div>
@@ -322,7 +322,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         </div>
                         <div class="widget-body">
                           <div class="widget-content">
-                            <div class="number" style="color:blue">0</div>
+                            <div class="number" style="color:blue">{{signature_update[0].name}}</div>
                           </div>
                         </div>
                         <div class="widget-footer">
@@ -332,7 +332,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         <div class="widget-head">
                           <div class="widget-label">
                             <div class="widget-title">
-                              <div class="number-label">Fully protected</div>
+                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Fully protected</div>
                             </div>
                             <div class="widget-subtitle"></div>
                           </div>
@@ -354,7 +354,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                         </div>
                         <div class="widget-body">
                           <div class="widget-content">
-                            <div class="number" style="color:green">51</div>
+                            <div class="number" style="color:green">{{fully_protected_status[0].name}}</div>
                           </div>
                         </div>
                         <div class="widget-footer">
@@ -391,9 +391,11 @@ margin-right: 2px;"></i>Export to excel file</button>
                           </div>
                         </div>
                         <div class="widget-body">
+                          {% for t in top_threats %}
                           <div class="widget-content" style="padding-top: 2px !important;">
-                            <div class="number" style="color:blue">0</div>
+                            <div class="number" style="font-size:12px !important; color:rgb(42, 42, 205)">{{t.threatname}} - <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">{{t.name}}</strong></div>
                           </div>
+                          {% endfor %}
                       
                         </div>
                         <div class="widget-footer">
@@ -424,9 +426,13 @@ margin-right: 2px;"></i>Export to excel file</button>
                           </div>
                         </div>
                         <div class="widget-body">
+                          {% for a in top_hosts %}
                           <div class="widget-content" style="padding-top: 2px !important;">
-                            <div class="number" style="color:green">51</div>
+                            
+                            <div class="number" style=" font-size:12px !important; color:rgb(42, 42, 205)"> {{a.name}}, {{a.comments}}, {{a.host_name}}- <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">  {{a.threat}}</strong></div><br>
+                            
                           </div>
+                          {% endfor %}
                         </div>
                         <div class="widget-footer">
                         </div>
@@ -461,8 +467,10 @@ margin-right: 2px;"></i>Export to excel file</button>
                             margin-bottom: 5px;">
           </div>
     
+          {% if us[0][1] == "System User" %}
           <div class="right" style="display:flex;     display: flex; justify-content: flex-end;">
     
+            
             <button type="button" id="add_to_client" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
               style=" background: #0e85af;     margin-right: 10px;">Add
               client</button>
@@ -471,6 +479,20 @@ margin-right: 2px;"></i>Export to excel file</button>
             <button type="button" class="btn btn-outline-info"><i class="fa fa-refresh" aria-hidden="true"
                 style="margin-right:4px;"></i>Refresh</button>
           </div>
+          {% else %}
+          <div class="right" style="display:flex;     display: flex; justify-content: flex-end;">
+    
+            
+            <button type="button" id="add_to_client" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal"
+              style=" background: #0e85af;     margin-right: 10px;" disabled>Add
+              client</button>
+            <button type="button" class="btn btn-outline-info" style="color:black;    margin-right: 10px;"disabled>Import</button>
+            <button type="button" class="btn btn-danger" style="    margin-right: 10px;"disabled>Delete all</button>
+            <button type="button" class="btn btn-outline-info "disabled><i class="fa fa-refresh" aria-hidden="true"
+                style="margin-right:4px;"></i>Refresh</button>
+          </div>
+
+          {% endif %}
     
         </div>
         <h3></h3>
@@ -551,7 +573,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                   style=" background:rgb(23, 98, 130);;border-color: #0985ff8c;border-radius: 6px;color: #f7f7f7; cursor:pointer"
                   id="perform_full_scan">Perform Full Scan</button>
                 <button
-                  style="width: 8%; width: 8%; background: no-repeat;border-color: #0985ff8c;border-radius: 6px;color: #0898d3; cursor:pointer">Back</button>
+                  style="width: 8%; width: 8%; background: no-repeat;border-color: #0985ff8c;border-radius: 6px;color: #0898d3; cursor:pointer" data-dismiss="modal">Back</button>
     
     
     
@@ -754,7 +776,7 @@ margin-right: 2px;"></i>Export to excel file</button>
                     <span id="comment_error"></span>
                   </div>
     
-                  <div class="form-group">
+                  <div class="form-group" style="display: none;">
                     <label for="hostname" class="col-form-label">Hostname:</label>
                     <input type="text" class="form-control" id="hostname" readonly>
                   </div>
@@ -787,9 +809,9 @@ margin-right: 2px;"></i>Export to excel file</button>
               </div>
     
               <div class="updateform">
-                <input type="text" class="ac" id="updateuuid1">
+                <input type="text" class="ac" id="updateuuid1" readonly>
                 <input type="text" class="ac" id="updatecomment1">
-                <input type="text" class="ac" id="updatehostname1" readonly>
+                <input type="text" class="ac" id="updatehostname1">
     
                 <input type="text" class="ac" id="updatename1" readonly>
     
@@ -854,16 +876,46 @@ margin-right: 2px;"></i>Export to excel file</button>
     
       </div>
     
-      <div id="Users" class="tabcontent">
-        <h3>Users</h3>
-        <p>Users is the capital of Japan.</p>
-      </div>
+     
     
       <div id="Logs" class="tabcontent">
         <h3>Logs</h3>
-        <p>Logs is the capital of Japan.</p>
+        {% set clients = frappe.db.sql(""" select uuid,host_name,date,registered_uuid from `tabDefender Logs` """) %}
+        <table id="example1" class="display" style="width: 100%">
+          <thead>
+            <tr >
+              <th>UUID</th>
+              <th>Host Name</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+    
+          <tbody>
+    
+    
+    
+            {% for c in clients %}
+            <tr>
+              <td>UUID {{c[0]}}</td>
+              <td> {{c[1]}} </td>
+              <td>{{c[2]}}</td>
+              <td>{% if c[3] == 1 %} <strong style="color: rgb(8, 209, 8);">Registered</strong>  {% else %} <strong style="color: rgb(192, 7, 7);">Not Registered</strong> {% endif %}</td>
+            </tr>
+            {% endfor %}
+    
+          </tbody>
+          <tfoot style="display:none;">
+            <tr>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Office</th>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
+    {% endwith %}
 
 
 
@@ -888,6 +940,12 @@ margin-right: 2px;"></i>Export to excel file</button>
             $('#example').DataTable();
             $(document).ready(function () {
                 $('#example').DataTable();
+                console.log("I am Calll")
+            });
+
+            $('#example1').DataTable();
+            $(document).ready(function () {
+                $('#example1').DataTable();
                 console.log("I am Calll")
             });
 

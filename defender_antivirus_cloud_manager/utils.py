@@ -30,6 +30,18 @@ def get_defender():
         checkuuid = frappe.db.exists('Clients Details', dict(name = uuid))
         if checkuuid:
             doc = frappe.get_doc("Clients Details", checkuuid)
+            logcheck = frappe.db.exists('Defender Logs', dict(name = uuid))
+            if logcheck:
+                log = frappe.get_doc("Defender Logs", logcheck)
+                log.host_name = record['sysinfo']['host_name']
+                log.registered_uuid = 1
+                log.save()
+            else:
+                log = frappe.new_doc("Defender Logs")
+                log.uuid = uuid
+                log.host_name = record['sysinfo']['host_name']
+                log.registered_uuid = 1
+                log.save()
             doc.anti_malware = record['dinfo']['AMServiceEnabled']
             doc.anti_spyware = record['dinfo']['AntispywareEnabled']
             doc.anti_virus = record['dinfo']['AntivirusEnabled']
@@ -45,6 +57,7 @@ def get_defender():
             doc.public = record['fwinfo']['Public']
             doc.private = record['fwinfo']['Private']
             doc.os = record['sysinfo']['os_name']
+            doc.host_name = record['sysinfo']['host_name']
             doc.interval_time = record['sysinfo']['interval']
             doc.os_version = record['sysinfo']['os_version']
             doc.manufacturer = record['sysinfo']['system_manufacturer']
@@ -170,6 +183,18 @@ def get_defender():
                     }
                 }
         else:
+            logcheck = frappe.db.exists('Defender Logs', dict(name = uuid))
+            if logcheck:
+                log = frappe.get_doc("Defender Logs", logcheck)
+                log.host_name = record['sysinfo']['host_name']
+                log.registered_uuid = 0
+                log.save()
+            else:
+                log = frappe.new_doc("Defender Logs")
+                log.uuid = uuid
+                log.host_name = record['sysinfo']['host_name']
+                log.registered_uuid = 0
+                log.save()
             return {
                 "status_code" : "UUID not exists"
             }
@@ -203,9 +228,12 @@ def getThreats(**args):
 
 @frappe.whitelist(allow_guest=True)
 def getclientdetails():
-    high = frappe.db.sql(""" select count(threatid) as id from `tabThreat  Details` """, as_dict=True)
+    high = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid < 5  GROUP BY name """, as_dict=True)
+    medium = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid > 4 and severityid < 7 GROUP BY name """, as_dict=True)
+    low = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid > 6 GROUP BY name """, as_dict=True)
     sid = frappe.db.sql(""" select count(detectionsourcetypeid) as id from `tabThreat  Details` """, as_dict=True)
-    return {"high":high,"sid":sid}
+    al = frappe.db.sql(""" select cleaningactionid as id,name from `tabThreat  Details`""",as_dict=True)
+    return {"high":high,"sid":sid,"al": al, "medium":medium, "low":low}
 
 @frappe.whitelist(allow_guest=True)
 def get_hostname():
@@ -218,8 +246,14 @@ def get_hostname():
 @frappe.whitelist(allow_guest=True)
 def delete_user(**args):
     userid = args.get('userid')
+    user = frappe.session.user
     if userid:
         frappe.delete_doc("Clients Details", userid)
+        log = frappe.new_doc("Client Logs")
+        log.uuid = userid
+        log.user = user
+        log.client_delete = 1
+        log.save()
         frappe.response["message"] = {
             "success_key" : "ok"
         }
@@ -233,15 +267,24 @@ def delete_user(**args):
 @frappe.whitelist(allow_guest=True)
 def update_user(**args):
     userid = args.get("userid")
+    user = frappe.session.user
     hostname = args.get("hostname")
     comment = args.get("comment")
     name = args.get("name")
     check = frappe.db.exists('Clients Details', dict(name = name))
     if check:
         doc = frappe.get_doc("Clients Details", check)
+        log = frappe.new_doc("Client Logs")
+        log.uuid = userid
+        log.comments = comment
+        log.user = user
+        log.host_name = hostname
+        log.client_update = 1
+        log.save()
+        doc.name = userid
         doc.client_uuid = userid
         doc.comments = comment
-        doc.hostname = hostname
+        doc.host_name = hostname
         doc.save()
         frappe.response["message"] = {
             "success_key" : "ok"

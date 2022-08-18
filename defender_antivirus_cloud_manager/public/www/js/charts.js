@@ -5,6 +5,12 @@
   getClientDetails();
 };
 
+function getchild() {
+  frappe.db.get_list('Threat Details',//Ex:Item Customer Details
+{
+	fields: ['*'],
+}).then((result) => { console.log('childdd',result); });
+}
 
 function getClientDetails() {
   fetch('/api/method/defender_antivirus_cloud_manager.utils.getclientdetails', {
@@ -16,17 +22,27 @@ function getClientDetails() {
 
 }).then(r => r.json())
 .then(r => {
-    console.log("A", r.message)
-    console.log("AB", r.message.high[0].id)
-    var a1 =  r.message.high[0].id
-    var a2 =  r.message.sid[0].id
-    var items = [];
+    var highs = [];
+    var day = [];
+    var mediums = []
+    var lows = []
     r.message.high.forEach(d => {
-      items.push(d.id)
+      highs.push(d.id)
       
     })
 
-    console.log("AA Items", items)
+    r.message.al.forEach(d => {
+      day.push(d.id)
+      
+    })
+    r.message.medium.forEach(d => {
+      mediums.push(d.id)
+    })
+    r.message.low.forEach(d => {
+      lows.push(d.id)
+    })
+    
+
     const labels = [
       'Mon',
       'Tue',
@@ -40,17 +56,24 @@ function getClientDetails() {
     const data = {
       labels: labels,
       datasets: [{
-        label: ['Details'],
+        label: ['Medium'],
         backgroundColor: 'rgb(255, 99, 132)',
         borderColor: 'rgb(255, 99, 132)',
-        data: [{x:1,y:2},{x:4,y:6},{x:18,y:56}],
+        data: mediums,
       },
       {
-        label: ['Week'],
-        backgroundColor: 'rgb(9 214 19)',
-        borderColor: 'rgb(2 254 9)',
-        data: [{x:1,y:4},{x:4,y:0},{x:18,y:78},{x:0,y:12},{x:1,y:70}],
-      }]
+        label: ['High'],
+        backgroundColor: '#ff5800',
+        borderColor: '#ff5800',
+        data: highs,
+      },
+      {
+        label: ['Low'],
+        backgroundColor: 'black',
+        borderColor: 'black',
+        data: lows,
+      }
+    ]
     };
   
     const config = {
