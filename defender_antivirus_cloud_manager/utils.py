@@ -3,6 +3,7 @@ import erpnext.education.utils as utils
 no_cache = 1
 import json
 import requests
+from datetime import datetime
 
 @frappe.whitelist(allow_guest=True)
 def get_record():
@@ -21,8 +22,19 @@ def get_defender1():
         return "bad"
 
 
+
+@frappe.whitelist(allow_guest=True)
+def get_threatlist(**args):
+    uuid = args.get('userid')
+    data = frappe.db.sql(""" select actionsuccess,additionalactionsbitmask,amproductversion,cleaningactionid,currentthreatexecutionstatusid,detectionid,\
+    detectionsourcetypeid,domainuser,initialdetectiontime,lastthreatstatuschangetime,processname,remediationtime,threatid,threatstatuserrorcode,threatstatusid,\
+    pscomputername,severityid,threatname from `tabThreat  Details` where parent = %s""",(uuid), as_dict=True)
+    return data
+
+
 @frappe.whitelist(allow_guest=True)
 def get_defender():
+    now = datetime.now()
     data = frappe.request.data
     uuid = frappe.get_request_header("uuid")
     record = json.loads(data.decode('utf-8'))
@@ -222,7 +234,7 @@ def getUserDetails(**args):
 @frappe.whitelist(allow_guest=True)
 def getThreats(**args):
     uuid = args.get('uuid')
-    total_threat = frappe.db.sql(""" select COUNT(name) as name from `tabThreat  Details` """)
+    total_threat = frappe.db.sql(""" select COUNT(name) as name from `tabThreat  Details` where parent=%s """,(uuid))
     return total_threat[0][0]
 
 
@@ -261,6 +273,13 @@ def delete_user(**args):
         frappe.response["message"] = {
             "not found":"Record not Found"
         }
+
+@frappe.whitelist(allow_guest=True)
+def delete_all_user():
+    frappe.db.delete("Clients Details")
+    frappe.response["message"] = {
+        "success_key" : "ok"
+    }
 
 
 
@@ -351,3 +370,18 @@ def addversion(**args):
         frappe.response["message"] = {
             "success_key" : "false"
         }
+
+
+@frappe.whitelist(allow_guest=True)
+def insertExcel(**args):
+    uuid = args.get("uuid")
+    host = args.get("host")
+    docc = frappe.new_doc("Clients Details")
+    docc.client_uuid = uuid
+    docc.host_name = host
+    docc.save()
+    frappe.response["message"] = {
+        "success_key" : "ok",
+        "uuid": uuid,
+        "host_name": host
+    }

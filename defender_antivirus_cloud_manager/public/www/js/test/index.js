@@ -4,6 +4,11 @@ window.login = {};
 const uuid_error = document.querySelector("#uuid_error");
 const comment_error = document.querySelector("#comment_error");
 const regmessage = document.querySelector("#add-user");
+const clientadded = document.querySelector("#cleint_added");
+const clientupdate = document.querySelector("#cleint_update");
+const clientdeleted = document.querySelector("#cleint_deleted");
+const threatparent = document.querySelector("#threatparent");
+const outerdiv = document.querySelector("#outer_div");
 const hostname = document.querySelector("#hostname");
 
 uuid_error.innerHTML = '';
@@ -64,18 +69,30 @@ document.querySelector("#add-user").addEventListener('click',
                 .then(r => r.json())
                 .then(r => {
 
-                    console.log("Result", r)
                     if(r.message.success_key == "ok") {
                         regmessage.innerHTML = '';
-                        regmessage.innerHTML += `Send Message`
-                        alert("Client add Successfully")
+                        clientadded.innerHTML +=`
+                        <p style="color: rgb(3, 146, 3);">Client Added Successfully!!</p>
+                        `
+                        setTimeout(() => {
+                            clientadded.innerHTML ='';
+                        }, 2000);
+                       
+                        regmessage.innerHTML += `Add`
+                        location.reload();
                     } else if(r.message.success_key == "exists"){
                         regmessage.innerHTML = '';
-                        regmessage.innerHTML += `Send Message`
-                        alert("Client Already Exists with given UUID")
+                        regmessage.innerHTML += `Add`
+
+                        clientadded.innerHTML +=`
+                        <p style="color: red;">Client Already Exists with given UUID</p>
+                        `
+                        setTimeout(() => {
+                            clientadded.innerHTML ='';
+                        }, 2000);
 
                     }else {
-                        alert("Error")
+                        alert("Something Wrong")
                     }
                       
                   
@@ -117,6 +134,7 @@ document.querySelector("#add-user").addEventListener('click',
         .then(r => {
             if(r.message.success_key == "ok") {
                 alert("Interval Updated Successfully")
+                location.reload();
             }
         })
 
@@ -178,6 +196,61 @@ document.querySelector("#add-user").addEventListener('click',
     })
 
 
+    function getclientsthreats() {
+        let uuid = document.querySelector("#client_uuid").value;
+        fetch('/api/method/defender_antivirus_cloud_manager.utils.get_threatlist', {
+            method: 'POST',
+            headers : {
+                'Content-Type' : 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            body: JSON.stringify({
+                userid : uuid,
+
+            })
+
+        }).then(r => r.json())
+        .then(r => {
+            let i = 1;
+            r.message.forEach((f, index) => {
+                
+                outerdiv.innerHTML +=` 
+                <p style="margin-left: 5%;margin-bottom: 1px;">Threat ${index}</p>
+                <div class="threat" id="threatparent" style="padding: 10px; border:1px solid gray; border-radius:4px; margin:5%;margin-top: 0px !important;">
+                <p>ActionSuccess:  <span id="ActionSuccess" style="color:#0094ff8f">${f.actionsuccess}</span></p>
+  
+                <p>AdditionalActionsBitMask:  <span id="AdditionalActionsBitMask" style="color:#0094ff8f">${f.additionalactionsbitmask}</span></p>
+                <p>AMProductVersion:  <span id="AMProductVersion" style="color:#0094ff8f">${f.amproductversion}</span></p>
+                <p>CleaningActionID:  <span id="CleaningActionID" style="color:#0094ff8f">${f.cleaningactionid}</span></p>
+                <p>CurrentThreatExecutionStatusID:  <span id="CurrentThreatExecutionStatusID" style="color:#0094ff8f">${f.currentthreatexecutionstatusid}</span></p>
+                <p>DetectionID:  <span id="DetectionID" style="color:#0094ff8f">${f.detectionid}</span></p>
+                <p>DetectionSourceTypeID:  <span id="DetectionSourceTypeID" style="color:#0094ff8f">${f.detectionsourcetypeid}</span></p>
+                <p>DomainUser:  <span id="DomainUser" style="color:#0094ff8f">${f.domainuser}</span></p>
+                <p>InitialDetectionTime:  <span id="InitialDetectionTime" style="color:#0094ff8f">${f.initialdetectiontime}</span></p>
+                <p>LastThreatStatusChangeTime:  <span id="LastThreatStatusChangeTime" style="color:#0094ff8f">${f.lastthreatstatuschangetime}</span></p>
+                <p>ProcessName:  <span id="ProcessName" style="color:#0094ff8f">${f.processname}</span></p>
+                <p>RemediationTime:  <span id="RemediationTime" style="color:#0094ff8f">${f.remediationtime}</span></p>
+                <p>SeverityID:  <span id="severityid" style="color:#0094ff8f">${f.severityid}</span></p>
+                <p>ThreatID:  <span id="ThreatID" style="color:#0094ff8f">${f.threatid}</span></p>
+                <p>ThreatStatusErrorCode:  <span id="ThreatStatusErrorCode" style="color:#0094ff8f">${f.threatstatuserrorcode}</span></p>
+                <p>ThreatStatusID:  <span id="ThreatStatusID" style="color:#0094ff8f">${f.threatstatusid}</span></p>
+                <p>PSComputerName:  <span id="PSComputerName" style="color:#0094ff8f">${f.pscomputername}</span></p>
+                <p>ThreatName:  <span id="ThreatName" style="color:#0094ff8f">${f.threatname}</span></p>
+              
+              </div>`
+            })
+            
+                // console.log("Threat ..:QA", r.message)
+               
+           
+            
+        })
+    }
+
+
+  
+
+
     document.querySelector("#add_to_client").addEventListener('click',
     (e) => {
 
@@ -205,13 +278,36 @@ document.querySelector("#add-user").addEventListener('click',
         })
         .then(r => r.json())
         .then(r => {
-            console.log("Client Data", r.message.sysinfo.host_name)
             document.getElementById("hostname").value = r.message.sysinfo.host_name;
         })
     })
 
 
-   
+    document.querySelector("#delete-all-record").addEventListener('click', (e) => {
+        const a = document.querySelector("#userid").value;
+      
+    
+    
+            fetch('/api/method/defender_antivirus_cloud_manager.utils.delete_all_user', {
+                method: 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'X-Frappe-CSRF-Token': frappe.csrf_token
+                }
+    
+            }).then(r => r.json())
+            .then(r => {
+                if(r.message.success_key == "ok") {
+                    clientdeleted.innerHTML +=`<p style="color: red;">All Client Deleted Successfully</p>`
+                setTimeout(() => {
+                    clientdeleted.innerHTML ='';
+                    window.close(); 
+                    location.reload();
+                }, 2000);
+                }
+            })
+    
+        })
 
     document.querySelector("#delete-one-record").addEventListener('click', (e) => {
     const a = document.querySelector("#userid").value;
@@ -231,7 +327,12 @@ document.querySelector("#add-user").addEventListener('click',
         }).then(r => r.json())
         .then(r => {
             if(r.message.success_key == "ok") {
-                alert("Clent Deleted Successfully")
+                clientdeleted.innerHTML +=`<p style="color: red;">Client Deleted Successfully</p>`
+            setTimeout(() => {
+                clientdeleted.innerHTML ='';
+                window.close(); 
+                location.reload();
+            }, 2000);
             }
         })
 
@@ -251,12 +352,7 @@ document.querySelector("#add-user").addEventListener('click',
 
     }
 
-    // document.querySelector("#list_of_threat").addEventListener('click', (e) => {
-
-    // }).then( r => r.json())
-    // .then(r => {
-    //     console.log("RR", r)
-    // })
+ 
 
     document.querySelector("#update-user").addEventListener('click', (e) => {
     const uuid = document.querySelector("#updateuuid1").value;
@@ -279,12 +375,24 @@ document.querySelector("#add-user").addEventListener('click',
     }).then(r => r.json())
     .then(r => {
         if(r.message.success_key == "ok") {
-            alert("Clent Updated Successfully")
+            clientupdate.innerHTML +=`<p style="color: green;">Client Updated Successfully</p>`
+            setTimeout(() => {
+                clientupdate.innerHTML ='';
+                window.close(); 
+                location.reload();
+            }, 2000);
+           
         }
         else if(r.message.success_key == "false") {
-            alert("Record not exists")
+            clientupdate.innerHTML +=`<p style="color: orange;">Record not exists</p>`
+            setTimeout(() => {
+                clientupdate.innerHTML ='';
+            }, 2000);
         } else {
-            alert("Record not updated")
+            clientupdate.innerHTML +=`<p style="color: red;">Record not updated</p>`
+            setTimeout(() => {
+                clientupdate.innerHTML ='';
+            }, 2000);
         }
     })
 
@@ -376,10 +484,10 @@ document.querySelector("#add-user").addEventListener('click',
 
 
              //signature Update
-             if(r.message.signature_update == "True") {
+             if(r.message.signature_update == "False") {
                 document.getElementById("signature_update").textContent = "OK"
                 document.getElementById("signature_update").style.color="rgb(21, 192, 21)"
-             } else if (r.message.signature_update == "False"){
+             } else if (r.message.signature_update == "True"){
              document.getElementById("signature_update").textContent = "Out-of-date"
              document.getElementById("signature_update").style.color="red"
 
@@ -550,5 +658,15 @@ document.querySelector("#add-user").addEventListener('click',
 
         })
     }
+
+
+    // function adduuid(uuid) {
+    //         const urlParams = new URLSearchParams(window.location.search);
+        
+    //         urlParams.set('uuid', uuid);
+        
+    //         window.location.search = urlParams;
+          
+    // }
     
  

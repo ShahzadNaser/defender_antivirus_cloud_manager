@@ -1,4 +1,5 @@
 from . import __version__ as app_version
+from defender_antivirus_cloud_manager.route import routes
 
 app_name = "defender_antivirus_cloud_manager"
 app_title = "Defender Antivirus Cloud Manager"
@@ -49,6 +50,7 @@ app_license = "Otgooneo"
 
 # Generators
 # ----------
+website_route_rules = routes
 
 # automatically create page for each record of this doctype
 # website_generators = ["Web Page"]

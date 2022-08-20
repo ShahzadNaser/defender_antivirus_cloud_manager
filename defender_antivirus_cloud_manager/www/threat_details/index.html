@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Import From Excell</title>
+  <script src="https://unpkg.com/read-excel-file@4.x/bundle/read-excel-file.min.js"></script>
+</head>
+<body>
+  <input type="file" id="input">
+  <table id="tbl-data"></table>
+
+
+  <script>
+    var input = document.getElementById("input");
+    input.addEventListener('change', function() {
+      readXlsxFile(input.files[0]).then(function(data) {
+        console.log(data);
+      })
+
+    })
+  </script>
+  
+</body>
+</html>
+
+
+
+<!-- <h5 style="color: #083fd5; margin-left:5% !important;">Threat</h5>
+<div class="threat" style="padding: 10px; border:1px solid gray; border-radius:4px; margin:5%">
+  <p>ActionSuccess:  <span id="ActionSuccess"></span></p>
+  <p>AdditionalActionsBitMask:  <span id="AdditionalActionsBitMask"></span></p>
+  <p>AMProductVersion:  <span id="AMProductVersion"></span></p>
+  <p>CleaningActionID:  <span id="CleaningActionID"></span></p>
+  <p>CurrentThreatExecutionStatusID:  <span id="CurrentThreatExecutionStatusID"></span></p>
+  <p>DetectionID:  <span id="DetectionID"></span></p>
+  <p>DetectionSourceTypeID:  <span id="DetectionSourceTypeID"></span></p>
+  <p>DomainUser:  <span id="DomainUser"></span></p>
+  <p>InitialDetectionTime:  <span id="InitialDetectionTime"></span></p>
+  <p>LastThreatStatusChangeTime:  <span id="LastThreatStatusChangeTime"></span></p>
+  <p>ProcessName:  <span id="ProcessName"></span></p>
+  <p>RemediationTime:  <span id="RemediationTime"></span></p>
+  <p>ThreatID:  <span id="ThreatID"></span></p>
+  <p>ThreatStatusErrorCode:  <span id="ThreatStatusErrorCode"></span></p>
+  <p>ThreatStatusID:  <span id="ThreatStatusID"></span></p>
+  <p>PSComputerName:  <span id="PSComputerName"></span></p>
+  <p>SeverityID:  <span id="SeverityID"></span></p>
+  <p>ThreatName:  <span id="ThreatName"></span></p>
+</div> -->

@@ -28,6 +28,7 @@ def addUser(**args):
         log.save()
         doc.client_uuid = uuid
         doc.comments = comment
+        doc.host_name = ""
         doc.save()
         frappe.response["message"] = {
             "success_key" : "ok",
