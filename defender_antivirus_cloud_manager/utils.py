@@ -4,6 +4,7 @@ no_cache = 1
 import json
 import requests
 from datetime import datetime
+from frappe.utils import nowdate, now_datetime
 
 @frappe.whitelist(allow_guest=True)
 def get_record():
@@ -22,7 +23,6 @@ def get_defender1():
         return "bad"
 
 
-
 @frappe.whitelist(allow_guest=True)
 def get_threatlist(**args):
     uuid = args.get('userid')
@@ -34,7 +34,6 @@ def get_threatlist(**args):
 
 @frappe.whitelist(allow_guest=True)
 def get_defender():
-    now = datetime.now()
     data = frappe.request.data
     uuid = frappe.get_request_header("uuid")
     record = json.loads(data.decode('utf-8'))
@@ -42,6 +41,23 @@ def get_defender():
         checkuuid = frappe.db.exists('Clients Details', dict(name = uuid))
         if checkuuid:
             doc = frappe.get_doc("Clients Details", checkuuid)
+            full_scan = "false"
+            new_interval = "false"
+            new_version = "false"
+            if doc.full_scan == "True":
+                full_scan = "true"
+            else:
+                full_scan = "false"
+            if doc.new_version == "True":
+                new_version = "true"
+            else:
+                new_version = "false"
+            if doc.new_interval == "True":
+                new_interval = "true"
+            else:
+                new_interval = "false"
+            download_path = doc.download_path
+            interval_time = doc.interval_time
             logcheck = frappe.db.exists('Defender Logs', dict(name = uuid))
             if logcheck:
                 log = frappe.get_doc("Defender Logs", logcheck)
@@ -81,15 +97,11 @@ def get_defender():
             doc.network_inspection_system = record['dinfo']['NISEnabled']
             doc.nis_signature = record['dinfo']['NISSignatureVersion']
             doc.office_antivirus = record['dinfo']['IoavProtectionEnabled']
-            doc.agent_version = record['dinfo']['IoavProtectionEnabled']
-            doc.last_update = record['dinfo']['AntivirusSignatureLastUpdated']
+            doc.agent_version = record['sysinfo']['version']
+            doc.last_update = now_datetime()
+            doc.test = now_datetime()
             doc.signature_update = record['dinfo']['DefenderSignaturesOutOfDate']
             doc.table_39 = []
-            full_scan = doc.full_scan
-            new_version = doc.new_version
-            new_interval = doc.new_interval
-            download_path = doc.download_path
-            interval_time = doc.interval_time
             for t in record['treport']:
                 row = doc.append("table_39",{})
                 row.actionsuccess = t['ActionSuccess']
@@ -100,7 +112,7 @@ def get_defender():
                 row.detectionid = t['DetectionID']
                 row.detectionsourcetypeid = t['DetectionSourceTypeID']
                 row.domainuser = t['DomainUser']
-                row.initialdetectiontime = t['InitialDetectionTime']
+                row.initialdetectiontime = now_datetime()
                 row.lastthreatstatuschangetime = t['LastThreatStatusChangeTime']
                 row.processname = t['ProcessName']
                 row.remediationtime = t['RemediationTime']
@@ -135,51 +147,51 @@ def get_defender():
             elif doc.full_scan == "True":
                 doc.full_scan = "False"
             doc.save()
-            if new_version == "True" and full_scan == "True" and new_interval =="True" and interval_time and download_path:
+            if new_version == "true" and full_scan == "true" and new_interval =="true" and interval_time and download_path:
                 return {
                     "status_code": "ok",
                     "response":{
-                        "new_version":"true",
+                        "new_version":new_version,
                         "download_path": download_path,
-                        "new_interval":"true",
+                        "new_interval":new_interval,
                         "interval": interval_time,
-                        "full_scan":"true"
+                        "full_scan":full_scan
                     }
 
                 }
-            elif new_version == "True" and download_path:
+            elif new_version == "true" and download_path:
                 return {
                     "status_code": "ok",
                     "response":{
-                        "new_version":"true",
+                        "new_version":new_version,
                         "download_path": download_path,
-                        "new_interval":"false",
-                        "interval":240,
-                        "full_scan":"false"
-                    }
-
-                }
-            elif new_interval == "True" and interval_time:
-                return {
-                    "status_code": "ok",
-                    "response":{
-                        "new_version":"false",
-                        "download_path":"",
-                        "new_interval":"true",
+                        "new_interval":new_interval,
                         "interval":interval_time,
-                        "full_scan":"false"
+                        "full_scan":full_scan
                     }
 
                 }
-            elif full_scan == "True":
+            elif new_interval == "true" and interval_time:
                 return {
                     "status_code": "ok",
                     "response":{
-                        "new_version":"false",
+                        "new_version":new_version,
                         "download_path":"",
-                        "new_interval":"false",
-                        "interval":240,
-                        "full_scan":"true"
+                        "new_interval":new_interval,
+                        "interval":interval_time,
+                        "full_scan":full_scan
+                    }
+
+                }
+            elif full_scan == "true":
+                return {
+                    "status_code": "ok",
+                    "response":{
+                        "new_version":new_version,
+                        "download_path":"",
+                        "new_interval":new_interval,
+                        "interval":interval_time,
+                        "full_scan":full_scan
                     }
 
                 }
@@ -187,11 +199,11 @@ def get_defender():
                 return {
                     "status_code": "ok",
                     "response":{
-                        "new_version":"false",
+                        "new_version":new_version,
                         "download_path":"",
-                        "new_interval":"false",
-                        "interval":0,
-                        "full_scan":"false"
+                        "new_interval":new_interval,
+                        "interval":interval_time,
+                        "full_scan":full_scan
                     }
                 }
         else:
@@ -237,12 +249,16 @@ def getThreats(**args):
     total_threat = frappe.db.sql(""" select COUNT(name) as name from `tabThreat  Details` where parent=%s """,(uuid))
     return total_threat[0][0]
 
-
 @frappe.whitelist(allow_guest=True)
-def getclientdetails():
-    high = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid < 5  GROUP BY name """, as_dict=True)
-    medium = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid > 4 and severityid < 7 GROUP BY name """, as_dict=True)
-    low = frappe.db.sql(""" select count(threatid) as id,name from `tabThreat  Details` where severityid > 6 GROUP BY name """, as_dict=True)
+def getclientdetails(**args):
+    day = args.get('value')
+    # if frappe.form_dict.day:
+    #     day = frappe.form_dict.day
+    # else:
+    #     day = 7
+    high = frappe.db.sql(""" select DISTINCT(DAYNAME(initialdetectiontime)) as day, count(threatid) as id,name from `tabThreat  Details` where initialdetectiontime >=CURRENT_DATE - %s and severityid < 5  GROUP BY day ORDER BY DAYOFWEEK(initialdetectiontime) """,(day), as_dict=True)
+    medium = frappe.db.sql(""" select DISTINCT(DAYNAME(initialdetectiontime)) as day, count(threatid) as id,name from `tabThreat  Details` where initialdetectiontime >=CURRENT_DATE - %s and severityid > 4 and severityid < 7 GROUP BY day ORDER BY DAYOFWEEK(initialdetectiontime) """,(day), as_dict=True)
+    low = frappe.db.sql(""" select DISTINCT(DAYNAME(initialdetectiontime)) as day, count(threatid) as id,name from `tabThreat  Details` where initialdetectiontime >=CURRENT_DATE - %s and severityid > 6 GROUP BY day ORDER BY DAYOFWEEK(initialdetectiontime) """,(day), as_dict=True)
     sid = frappe.db.sql(""" select count(detectionsourcetypeid) as id from `tabThreat  Details` """, as_dict=True)
     al = frappe.db.sql(""" select cleaningactionid as id,name from `tabThreat  Details`""",as_dict=True)
     return {"high":high,"sid":sid,"al": al, "medium":medium, "low":low}
@@ -376,12 +392,14 @@ def addversion(**args):
 def insertExcel(**args):
     uuid = args.get("uuid")
     host = args.get("host")
-    docc = frappe.new_doc("Clients Details")
-    docc.client_uuid = uuid
-    docc.host_name = host
-    docc.save()
-    frappe.response["message"] = {
-        "success_key" : "ok",
-        "uuid": uuid,
-        "host_name": host
-    }
+    check = frappe.db.exists('Clients Details', dict(name = uuid))
+    if check:
+        pass
+    else:
+        docc = frappe.new_doc("Clients Details")
+        docc.client_uuid = uuid
+        docc.host_name = host
+        docc.save()
+        frappe.response["message"] = {
+            "success_key" : "ok"
+        }

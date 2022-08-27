@@ -128,6 +128,31 @@
         font-size: 17px;
     }
 
+    .total_hosts {
+      background: rgb(12,143,247);
+      padding: 23px;
+      margin: 12px;
+    }
+
+    .total_infected_top {
+      background: rgb(116,50,154);
+      padding: 23px;
+      margin: 12px;
+    }
+    
+
+    .total_hosts_top {
+      background: rgb(12,143,247);
+      padding: 23px;
+      margin: 12px;
+      margin-bottom: -12px;
+    }
+
+    .outer_me {
+      padding:5px;
+      margin-top:10px;
+      background-color: rgb(245, 245, 245) !important;
+    }
     /* Change background color of buttons on hover */
     .tab button:hover {}
 
@@ -144,7 +169,7 @@
         border-top: none;
     }
     .host_details {
-      background-color: #cacaca40;
+      background-color: rgb(245,245,245);;
       max-width: 1009px !important;
 
       margin-top: 1%;
@@ -199,7 +224,97 @@
   margin-left: 6%;
 }
 
+.number-label {
+  font-size: 13px !important;
+    color: #1F272E;
+    line-height: 18.2px;
+    font-weight: 500 !important;
+}
 
+.total {
+  font-size: 34px !important;
+  color: white;
+  line-height: 18.2px;
+  font-weight: 500 !important;
+  margin-left: -1%;
+}
+.total_10{
+  font-size: 30px !important;
+  color: white;
+  line-height: 18.2px;
+  font-weight: 200 !important;
+  margin-left: -1%;
+}
+.widget-control {
+  display: none !important;
+}
+
+#threat_id {
+  font-size: 24px !important;
+  font-weight: 500 !important;
+  color: rgb(106,105,105);
+}
+
+#wid-laberl {
+  width: 100%;
+  display: flex;
+  justify-content: inherit;
+}
+
+#wid-value{
+  font-size: 42px !important;
+  font-weight: 500 !important;
+}
+
+#wid_title {
+  display: flex;
+  width: 100%;
+  justify-content: inherit;
+  margin-top: 18px;
+}
+
+#chart_me {
+  margin-top: 2%;
+  margin-left: 12px;
+  margin-right: 12px;
+  border-radius: 0px;
+}
+#top_ten {
+  height: auto !important;
+  border-radius: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 6px;
+  padding: 0px;
+  padding-left: 14px;
+}
+
+#total_infected_top {
+
+  height: auto !important;
+  border-radius: 0px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 6px;
+  padding: 0px;
+  padding-left: 14px;
+}
+#start,#week {
+  width: 43%;
+  margin-left: 1%;
+  height: 29px;
+  padding-left: 7px;
+  padding-right: 7px;
+  border: 1px solid #8080802e;
+}
+#refresh{
+  padding: 2px;
+  height: 28px;
+  font-size: 12px;
+  width: 10%;
+  color: #26aefa;
+  border: 1px solid #23bdf3;
+}
     
 </style>
 
@@ -211,7 +326,7 @@
         <button class="tablinks" onclick="openCity(event, 'Dashboards')" id="defaultOpen">Dashboards</button>
         <button class="tablinks" onclick="openCity(event, 'Clients')">Clients</button>
         <button class="tablinks" onclick="openCity(event, 'Logs')">Logs</button>
-        <button class="tablinks" onclick="show()" style="float:right;color: #085281;" {% if us[0][1] == 'System User' %} {% else %} disabled {% endif %}><i class="fa fa-file-excel-o"
+        <button class="tablinks" onclick="exportData()"  style="float:right;color: #085281;" {% if us[0][1] == 'System User' %} {% else %} disabled {% endif %}><i class="fa fa-file-excel-o"
                 aria-hidden="true" style="    color: #0a88d885;
             margin-right: 2px;"></i>Export to excel file</button>
 
@@ -229,253 +344,326 @@
       
       
       {% endif %} 
+      
     
-      <div id="Dashboards" class="tabcontent" style="background:aliceblue !important">
+      <div id="Dashboards" class="tabcontent" style="background:rgb(250,251,253) !important">
         
         <!-- <h3>Dashboards</h3> -->
         {% set total = frappe.db.sql(""" select count(name) as name from `tabClients Details` """) %}
-        <h3>Total <strong style="color: rgb(2, 232, 98); ">{{total[0][0]}}</strong>  Hosts</h3>
-        <div class="container page-body">
-          <div class="page-toolbar hide">
-            <div class="container"> </div>
+        <div class="outer_me">
+
+          <div class="dashboard-filters" style="display: none;">
+            <input type="date" id="start" name="trip-start"value="2018-07-22" required pattern="dd-mm-yyyy">
+            <select id="week" name="week" onchange="getdays()">
+              <option value="1"> Last 1 days</option>
+              <option value="7"> Last 7 days</option>
+              <option value="10">Last 10 days</option>
+              <option value="15">Last 15 days</option>
+              <option value="20">Last 20 days</option>
+              <option value="25">Last 25 days</option>
+              <option value="30">Last 30 days</option>
+            </select>
+            <button id="refresh" type="button" class="btn btn-outline-info" onclick="refresh()"><i class="fa fa-refresh" aria-hidden="true" style="margin-right:4px;"></i>Refresh</button>
           </div>
-          <div class="page-wrapper">
-            <div class="page-content">
-              <div class="dashboard" style="overflow: visible">
-                <div class="dashboard-graph">
-                  <div class="widget-group ">
-                    <div class="widget-group-head">
-    
-                      <div class="widget-group-control"></div>
-                    </div>
-                    <div class="widget-group-body grid-col-3">
-                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="New Loans">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Threat Protection issue</div>
-                            </div>
-                            <div class="widget-subtitle"></div>
-                          </div>
-                          <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="widget-body">
-                          <div class="widget-content">
-                          
-                            <div class="number" style="color:red">{{defender_status[0].name}}</div>
-                           
-                          </div>
-                        </div>
-                        <div class="widget-footer">
-                        </div>
+          
+          <div class="total_hosts">
+            <h3 class="total">TOTAL   <strong style="color: #feffff;font-size: 40px; z-index: 3;margin-right: 12px; margin-left: 12px;">{{total[0][0]}}</strong>     HOSTS</h3>
+          </div>
+        
+          <div class="abc">
+            <div class="page-toolbar hide">
+              <div class="container"> </div>
+            </div>
+            <div class="page-wrapper">
+              <div class="page-content">
+                <div class="dashboard" style="overflow: visible">
+                  <div class="dashboard-graph">
+                    <div class="widget-group ">
+                      <div class="widget-group-head">
+      
+                        <div class="widget-group-control"></div>
                       </div>
-                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Active Loans">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Firewall issue</div>
+                      <div class="widget-group-body grid-col-2" style=" margin-left: 11px; margin-right: 11px;">
+                        <div class="widget widget-shadow    number-widget-box" data-widget-name="New Loans" style="border-radius: 0px !important;height: 72px !important;">
+                          <div class="widget-head">
+                            <div class="widget-label" id="wid-laberl" style="width:100%; display:flex;justify-content: inherit;">
+                              <div class="widget-title" id="wid_title">
+                                <div class="number-label" id="threat_id" style="font-size: 16px;font-weight: bold;">Threat Protection issue </div>
+                                <div class="number"  id="wid-value" style="color:red">{{defender_status[0].name}}</div>
+                              </div>
+                             
+                             
                             </div>
-                            <div class="widget-subtitle"></div>
-                          </div>
-                          <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div class="widget-body">
-                          <div class="widget-content">
+                          <div class="widget-body" style="display: none;">
+                            <div class="widget-content">
                             
-                            <div class="number" style="color:#dcbf02a3;">{{firewall_status[0].name}}</div>
-                           
+                              <div class="number" style="color:red">{{defender_status[0].name}}</div>
                             
-                          </div>
-                        </div>
-                        <div class="widget-footer">
-                        </div>
-                      </div>
-                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Closed Loans">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Signature out dated</div>
-                            </div>
-                            <div class="widget-subtitle"></div>
-                          </div>
-                          <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
                             </div>
                           </div>
+                          <div class="widget-footer">
+                          </div>
                         </div>
-                        <div class="widget-body">
-                          <div class="widget-content">
-                           
-                            <div class="number" style="color:blue">{{signature_update[0].name}}</div>
-                          
+                        <div class="widget widget-shadow number-widget-box" style="border-radius: 0px !important;height: 72px !important;" data-widget-name="Active Loans">
+                          <div class="widget-head">
+                            <div class="widget-label" id="wid-laberl">
+                              <div class="widget-title" id="wid_title">
+                                <div class="number-label" id="threat_id" style="font-size: 16px;font-weight: bold;">Firewall issue</div>
+                             
+                                <div class="number" id="wid-value" style="color:#f08d0cbd;">{{firewall_status[0].name}}</div>
+                              </div>
+                             
+                            </div>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="widget-body" style="display: none;">
+                            <div class="widget-content">
+                              
+                              <div class="number" style="color:#dcbf02a3;">{{firewall_status[0].name}}</div>
                             
+                              
+                            </div>
+                          </div>
+                          <div class="widget-footer">
                           </div>
                         </div>
-                        <div class="widget-footer">
-                        </div>
-                      </div>
-                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Total Disbursed">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label" style="font-size: 16px;font-weight: bold;">Fully protected</div>
+                        <div class="widget         widget-shadow    number-widget-box" style="border-radius: 0px !important;height: 72px !important;" data-widget-name="Closed Loans">
+                          <div class="widget-head">
+                            <div class="widget-label" id="wid-laberl">
+                              <div class="widget-title" id="wid_title">
+                                <div class="number-label" id="threat_id" style="font-size: 16px;font-weight: bold;">Signature out dated</div>
+                                <div class="number" id="wid-value" style="color:#00afff">{{signature_update[0].name}}</div>
+                              </div>
+                             
                             </div>
-                            <div class="widget-subtitle"></div>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="widget-body" style="display: none;">
+                            <div class="widget-content">
+                            
+                              <div class="number" style="color:blue">{{signature_update[0].name}}</div>
+                            
+                              
+                            </div>
+                          </div>
+                          <div class="widget-footer">
+                          </div>
+                        </div>
+                        <div class="widget         widget-shadow    number-widget-box" style="border-radius: 0px !important;height: 72px !important;" data-widget-name="Total Disbursed">
+                          <div class="widget-head">
+                            <div class="widget-label" id="wid-laberl">
+                              <div class="widget-title" id="wid_title">
+                                <div class="number-label" id="threat_id" style="font-size: 16px;font-weight: bold;">Fully protected</div>
+                                <div class="number" id="wid-value" style="color:rgb(7,170,98)">{{fully_protected_status[0].name}}</div>
+                              </div>
+                              
+                            </div>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="widget-body" style="display: none;">
+                            <div class="widget-content">
+                            
+                              <div class="number" style="color:blue">{{fully_protected_status[0].name}}</div>
+                            
+                            </div>
+                          </div>
+                          <div class="widget-footer">
+                          </div>
+                        </div>
+                    
+                      </div>
+                      <div class="widget  widget-shadow dashboard-widget-box" id="chart_me" data-widget-name="86d572d7a0" style="margin-top:2%;">
+                        <div class="widget-head">
+                          <div class="widget-label" style="width: 100% !important;">
+                            <div class="widget-subtitle" id="threat_id">Total threats found (past week):   High {% if highsum == 0 %} <strong style="color: green;margin-right: 1%;">  {{highsum}}</strong>{% else %}<strong style="color: rgb(255 161 161);margin-right: 1%;">  {{highsum}}</strong> {% endif %}
+                                Medium {% if mediumsum == 0 %}<strong style="color: rgb(6, 177, 6);margin-right: 1%;"> {{mediumsum}}</strong>{% else %} <strong style="color: orange;margin-right: 1%;"> {{mediumsum}}</strong>{% endif %}  
+                                 Low {% if lowsum == 0 %}<strong style="color: rgb(6, 177, 6);margin-right: 1%;"> {{lowsum}}</strong> {% else %}<strong style="color: rgb(98, 205, 255);margin-right: 1%;"> {{lowsum}}</strong>  {% endif %}  
+                                 Total {% if totalsum %}<strong style="color: rgb(194, 20, 20);"> {{totalsum}}</strong>{% else %} <strong style="color: rgb(6, 177, 6);"> {{totalsum}}</strong>{% endif %} <span class="frappe-timestamp "
+                                data-timestamp="2022-08-21 05:43:41.666257" title="21-08-2022 05:43:41"></span></div>
                           </div>
                           <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="widget-body">
-                          <div class="widget-content">
-                           
-                            <div class="number" style="color:blue">{{fully_protected_status[0].name}}</div>
-                           
-                          </div>
-                        </div>
-                        <div class="widget-footer">
-                        </div>
-                      </div>
-                  
-                    </div>
-
-
-                    <!-- List of Threats -->
-                     <div class="widget-group-body grid-col-2" style="margin-top: 2%;">
-                      <div class="widget   widget-shadow    number-widget-box" data-widget-name="Closed Loans" style="height: auto !important;">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label" style="font-size: 20px;font-weight: bold;font-family: inherit;">Top 10 threats</div>
-                            </div>
-                            <div class="widget-subtitle"></div>
-                          </div>
-                          <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="widget-body">
-                          {% for t in top_threats %}
-                          <div class="widget-content" style="padding-top: 2px !important;">
-                            <div class="number" style="font-size:12px !important; color:rgb(42, 42, 205)">{{t.threatname}} - <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">{{t.name}}</strong></div>
-                          </div>
-                          {% endfor %}
+                            <div class="chart-actions dropdown pull-right">
                       
-                        </div>
-                        <div class="widget-footer">
-                        </div>
-                      </div>
-                      <div class="widget         widget-shadow    number-widget-box" data-widget-name="Total Disbursed" style="height: auto !important;">
-                        <div class="widget-head">
-                          <div class="widget-label">
-                            <div class="widget-title">
-                              <div class="number-label"  style="font-size: 20px;font-weight: bold;font-family: inherit;">Top 10 infected hosts (uuid, comment, hostname)</div>
-                            </div>
-                            <div class="widget-subtitle"></div>
-                          </div>
-                          <div class="widget-control">
-                            <div class="card-actions dropdown pull-right">
-                              <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                ...
-                              </a>
-                              <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
-                                <li class="dropdown-item">
-                                  <a data-action="action-refresh">Refresh</a>
-                                </li>
-                                <li class="dropdown-item">
-                                  <a data-action="action-edit">Edit</a>
-                                </li>
-                              </ul>
                             </div>
                           </div>
                         </div>
                         <div class="widget-body">
-                          {% for a in top_hosts %}
-                          <div class="widget-content" style="padding-top: 2px !important;">
-                            
-                            <div class="number" style=" font-size:12px !important; color:rgb(42, 42, 205)"> {{a.name}}, {{a.comments}}, {{a.host_name}}- <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">  {{a.threat}}</strong></div><br>
-                            
+                          <div class="chart-loading-state text-muted" style="height: 240px; display: none;">Loading...</div>
+                          <div class="chart-loading-state text-muted" style="height: 240px; display: none;">No Data</div>
+                          <div>
+                            <div class="chart-container">
+                              <canvas id="chart" width="400" height="400" style="max-height: 400px !important;"></canvas>
+                            </div>
                           </div>
-                          {% endfor %}
                         </div>
                         <div class="widget-footer">
                         </div>
                       </div>
 
-                     </div>
-                    
-                     <div class="charts" style="max-height: 400px;">
-                      <canvas id="chart" width="400" height="400"></canvas>
-                     </div>
-                    
-                      <script src="/assets/defender_antivirus_cloud_manager/www/js/charts.js"></script>
+                      <!-- List of Threats -->
+                      <div class="total_hosts_top" style="">
+                        <h3 class="total_10">   <strong >Top 10 threats</strong> </h3>
+                      </div>
+                      <div class="widget-group-body" style="margin-top: 2%;">
+                        {% for t in top_threats %}
+                        <div class="widget   widget-shadow number-widget-box" data-widget-name="Closed Loans" id="top_ten">
+                          <div class="widget-head">
+                            <div class="widget-label">
+                              <div class="widget-title">
+                                <!-- <div class="number-label" style="font-size: 20px !important;font-family: inherit;">Top 10 threats</div> -->
+                              </div>
+                              <div class="widget-subtitle"></div>
+                            </div>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="widget-body">
+                            
+                            <div class="widget-content" style="padding-top: 2px !important;">
+                              <div class="number" style="    font-size: 18px !important;
+                              color: rgb(88 182 255) !important;
+                              font-weight: 500 !important;
+                              font-family: revert;">{{loop.index}}. {{t.threatname}} - <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">{{t.name}}</strong></div>
+                            </div>
+                           
+                        
+                          </div>
+                          <div class="widget-footer">
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+
+                      <div class="total_infected_top">
+                        <h3 class="total_10"><strong >Top 10 infected hosts (uuid, comment, hostname)</strong> </h3>
+                      </div>
+                      
+                      <div class="widget-group-body"  >
+                        {% for a in top_hosts %}
+                        <div class="widget widget-shadow    number-widget-box" data-widget-name="Total Disbursed" id="top_ten">
+                          <div class="widget-head">
+                            <div class="widget-label">
+                              <div class="widget-title">
+                                <!-- <div class="number-label"  style="font-size: 20px !important;font-family: inherit;">Top 10 infected hosts (uuid, comment, hostname)</div> -->
+                              </div>
+                              <div class="widget-subtitle"></div>
+                            </div>
+                            <div class="widget-control">
+                              <div class="card-actions dropdown pull-right">
+                                <a data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                  ...
+                                </a>
+                                <ul class="dropdown-menu" style="max-height: 300px; overflow-y: auto;">
+                                  <li class="dropdown-item">
+                                    <a data-action="action-refresh">Refresh</a>
+                                  </li>
+                                  <li class="dropdown-item">
+                                    <a data-action="action-edit">Edit</a>
+                                  </li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="widget-body">
+                            
+                            <div class="widget-content" style="padding-top: 2px !important;">
+                              
+                              <div class="number" style="font-size: 18px !important;
+                              color: rgb(88 182 255) !important;
+                              font-weight: 500 !important;
+                              font-family: revert;">{{loop.index}}. {{a.name}}, {{a.comments}}, {{a.host_name}}- <strong style="color:#e1a90d; font-weight:bold; font-size:16px;">  {{a.threat}}</strong></div><br>
+                              
+                            </div>
+                           
+                          </div>
+                          <div class="widget-footer">
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                      
+                     
+                      <!-- <div class="charts" style="max-height: 400px;">
+                        <canvas id="chart" width="400" height="400"></canvas>
+                      </div> -->
+                      
+                        <script src="/assets/defender_antivirus_cloud_manager/www/js/charts.js"></script>
 
 
+                    </div>
+      
                   </div>
-    
                 </div>
               </div>
             </div>
@@ -484,7 +672,7 @@
       </div>
     
     
-      <div id="Clients" class="tabcontent">
+      <div id="Clients" class="tabcontent" style="background: rgb(245,245,245);;">
         <div class="clients_bar" style="display: flex;
             justify-content: space-between;">
           <div class="left">
@@ -544,9 +732,9 @@
         <table id="example" class="display" style="width: 100%">
           <thead>
             <tr style="display:none;">
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
+              <th>UUID</th>
+              <th>Comments</th>
+              <th>Hosts</th>
             </tr>
           </thead>
     
@@ -576,9 +764,9 @@
           </tbody>
           <tfoot style="display:none;">
             <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
+              <th>UUID</th>
+              <th>Comments</th>
+              <th>Hosts</th>
             </tr>
           </tfoot>
         </table>
@@ -777,6 +965,7 @@
               </div>
             </div>
           </div>
+          
         </div>
     
         <!--Host Detals END-->
@@ -1016,7 +1205,7 @@
     
      
     
-      <div id="Logs" class="tabcontent">
+      <div id="Logs" class="tabcontent" style="background: rgb(245,245,245);">
         <h3>Logs</h3>
         {% set clients = frappe.db.sql(""" select uuid,host_name,date,registered_uuid from `tabDefender Logs` """) %}
         <table id="example1" class="display" style="width: 100%">
@@ -1045,9 +1234,9 @@
           </tbody>
           <tfoot style="display:none;">
             <tr>
-              <th>Name</th>
-              <th>Position</th>
-              <th>Office</th>
+              <th>UUID</th>
+              <th>Comments</th>
+              <th>Hosts</th>
             </tr>
           </tfoot>
         </table>
@@ -1060,9 +1249,7 @@
     <script>
 
 
-        function show() {
-            alert("Data Exported")
-        }
+       
         function openCity(evt, cityName) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
@@ -1180,7 +1367,14 @@
 
           document.querySelector("#save_import").addEventListener('click',
           (e) => {
+              const regimport = document.querySelector("#save_import");
+
               brands.forEach((b) => {
+                regimport.innerHTML = '';
+                regimport.innerHTML += `
+                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                Loading...
+                `
                 fetch('/api/method/defender_antivirus_cloud_manager.utils.insertExcel', {
                   method: 'POST',
                   headers : {
@@ -1194,13 +1388,39 @@
       
               }).then(r => r.json())
               .then(r => {
-                  console.log("OBJ",r.message)
+                if(r.message.success_key == "ok") {
+                  regimport.innerHTML = '';
+                  regimport.innerHTML +=`Save`
+
+                }
+                  
               })
       
               })
              
       
           })
+
+          function getdays() {
+            var e = document.getElementById("week");
+            var value = e.value;
+            fetch('/api/method/defender_antivirus_cloud_manager.utils.getclientdetails', {
+              method: 'POST',
+              headers : {
+                  'Content-Type' : 'application/json',
+                  'X-Frappe-CSRF-Token': frappe.csrf_token
+              },
+              body: JSON.stringify({
+                value:value
+              })
+  
+              }).then(r => r.json())
+              .then(r => {
+                  console.log('HUM',r)
+              })
+          }
+          getdays()
+          
 
 
     </script>

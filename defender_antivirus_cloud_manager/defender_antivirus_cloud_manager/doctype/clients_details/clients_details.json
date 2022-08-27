@@ -54,7 +54,8 @@
   "new_interval",
   "column_break_46",
   "new_version",
-  "download_path"
+  "download_path",
+  "test"
  ],
  "fields": [
   {
@@ -307,11 +308,16 @@
   {
    "fieldname": "column_break_46",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "test",
+   "fieldtype": "Data",
+   "label": "test"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-08-19 18:20:12.497839",
+ "modified": "2022-08-21 04:51:03.850194",
  "modified_by": "Administrator",
  "module": "Defender Antivirus Cloud Manager",
  "name": "Clients Details",
